@@ -1,0 +1,15 @@
+# Compiled class files
+target/
+*.class
+
+# Spec files (internal planning documents)
+.kiro/specs/
+
+# IDE files
+.idea/
+.vscode/
+*.iml
+
+# OS files
+.DS_Store
+Thumbs.db

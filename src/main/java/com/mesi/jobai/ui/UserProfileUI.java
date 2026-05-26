@@ -2,6 +2,7 @@ package com.mesi.jobai.ui;
 
 import com.mesi.jobai.dao.UserDAO;
 import com.mesi.jobai.model.User;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -16,28 +17,39 @@ public class UserProfileUI {
     public UserProfileUI(User currentUser) {
         this.currentUser = currentUser;
         this.userDAO = new UserDAO();
-        view = new VBox(20);
+        view = new VBox(25);
         view.getStyleClass().add("content-area");
+        view.setAlignment(Pos.TOP_LEFT);
 
         Label sectionTitle = new Label("My Profile");
-        sectionTitle.setStyle("-fx-font-size: 24px; -fx-font-weight: bold;");
+        sectionTitle.setStyle("-fx-font-size: 28px; -fx-font-weight: 800; -fx-text-fill: -text-light;");
+
+        VBox formCard = new VBox(15);
+        formCard.getStyleClass().add("card");
+        formCard.setPadding(new Insets(30));
+        formCard.setMaxWidth(500);
 
         Label roleLabel = new Label("Account Type: " + currentUser.getRole());
-        roleLabel.setStyle("-fx-font-size: 14px; -fx-text-fill: #555; -fx-font-style: italic;");
+        roleLabel.setStyle("-fx-font-size: 15px; -fx-text-fill: -accent-color; -fx-font-weight: bold; -fx-padding: 0 0 10 0;");
 
         TextField nameField = new TextField(currentUser.getName());
         nameField.setPromptText("Full Name");
-        nameField.setMaxWidth(300);
+        nameField.setMaxWidth(Double.MAX_VALUE);
+        nameField.setPrefHeight(45);
 
         TextField emailField = new TextField(currentUser.getEmail());
         emailField.setPromptText("Email Address");
-        emailField.setMaxWidth(300);
+        emailField.setMaxWidth(Double.MAX_VALUE);
+        emailField.setPrefHeight(45);
         // We often disable email editing to keep it simple, but let's allow it for now if they want to update
 
         Label statusLabel = new Label();
+        statusLabel.setStyle("-fx-font-weight: bold;");
 
         Button updateBtn = new Button("Save Changes");
         updateBtn.getStyleClass().add("btn-accent");
+        updateBtn.setMaxWidth(Double.MAX_VALUE);
+        updateBtn.setPrefHeight(45);
         
         updateBtn.setOnAction(e -> {
             String newName = nameField.getText();
@@ -45,7 +57,7 @@ public class UserProfileUI {
             
             if (newName.isEmpty() || newEmail.isEmpty()) {
                 statusLabel.setText("Fields cannot be empty.");
-                statusLabel.setStyle("-fx-text-fill: red;");
+                statusLabel.setStyle("-fx-text-fill: -error-color;");
                 return;
             }
             
@@ -54,17 +66,21 @@ public class UserProfileUI {
             
             if (userDAO.updateUser(currentUser)) {
                 statusLabel.setText("Profile updated successfully!");
-                statusLabel.setStyle("-fx-text-fill: green;");
+                statusLabel.setStyle("-fx-text-fill: -success-color;");
             } else {
                 statusLabel.setText("Failed to update profile. Email might be in use.");
-                statusLabel.setStyle("-fx-text-fill: red;");
+                statusLabel.setStyle("-fx-text-fill: -error-color;");
             }
         });
 
-        view.getChildren().addAll(sectionTitle, roleLabel, 
-            new Label("Name:"), nameField, 
-            new Label("Email:"), emailField, 
-            statusLabel, updateBtn);
+        Label lblName = new Label("Full Name");
+        lblName.setStyle("-fx-text-fill: -text-muted; -fx-font-weight: bold;");
+        Label lblEmail = new Label("Email Address");
+        lblEmail.setStyle("-fx-text-fill: -text-muted; -fx-font-weight: bold;");
+
+        formCard.getChildren().addAll(roleLabel, lblName, nameField, lblEmail, emailField, statusLabel, updateBtn);
+
+        view.getChildren().addAll(sectionTitle, formCard);
     }
 
     public VBox getView() {

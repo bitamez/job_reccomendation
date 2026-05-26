@@ -6,6 +6,7 @@ import com.mesi.jobai.model.User;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.geometry.Insets;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -22,27 +23,33 @@ public class ApplicationsUI {
         this.currentUser = currentUser;
         this.applicationDAO = new ApplicationDAO();
         
-        view = new VBox(20);
+        view = new VBox(25);
         view.getStyleClass().add("content-area");
 
         Label sectionTitle = new Label("My Applications");
-        sectionTitle.setStyle("-fx-font-size: 24px; -fx-font-weight: bold;");
+        sectionTitle.setStyle("-fx-font-size: 28px; -fx-font-weight: 800; -fx-text-fill: -text-light;");
         view.getChildren().add(sectionTitle);
+
+        VBox cardBox = new VBox(15);
+        cardBox.getStyleClass().add("card");
+        cardBox.setPadding(new Insets(20));
+        cardBox.setMaxWidth(850);
 
         TableView<Application> table = new TableView<>();
         table.getStyleClass().add("table-view");
+        table.setPrefHeight(400);
 
         TableColumn<Application, String> titleCol = new TableColumn<>("Job Title");
         titleCol.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getJobTitle()));
-        titleCol.setPrefWidth(200);
+        titleCol.setPrefWidth(250);
 
         TableColumn<Application, String> companyCol = new TableColumn<>("Company");
         companyCol.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getCompanyName()));
-        companyCol.setPrefWidth(150);
+        companyCol.setPrefWidth(200);
 
         TableColumn<Application, String> statusCol = new TableColumn<>("Status");
         statusCol.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getStatus()));
-        statusCol.setPrefWidth(120);
+        statusCol.setPrefWidth(150);
 
         TableColumn<Application, String> dateCol = new TableColumn<>("Applied On");
         dateCol.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getAppliedAt()));
@@ -54,7 +61,8 @@ public class ApplicationsUI {
         ObservableList<Application> data = FXCollections.observableArrayList(dbApps);
         table.setItems(data);
 
-        view.getChildren().add(table);
+        cardBox.getChildren().add(table);
+        view.getChildren().add(cardBox);
     }
 
     public VBox getView() {

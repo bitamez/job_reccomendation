@@ -18,6 +18,7 @@ public class DashboardUI {
     private UserProfileUI userProfileUI;
     private SkillsUI skillsUI;
     private EmployerApplicationsUI employerApplicationsUI;
+    private EmployerAnalyticsUI employerAnalyticsUI;
     private User currentUser;
     private Stage stage;
 
@@ -36,10 +37,17 @@ public class DashboardUI {
         this.userProfileUI = new UserProfileUI(currentUser);
         this.skillsUI = new SkillsUI(currentUser);
         this.employerApplicationsUI = new EmployerApplicationsUI(currentUser);
+        this.employerAnalyticsUI = new EmployerAnalyticsUI(currentUser);
 
         mainLayout.setTop(header);
         mainLayout.setLeft(sidebar);
-        mainLayout.setCenter(jobList.getView());
+        
+        // Initial center view logic based on role
+        if (currentUser.getRole().equals("EMPLOYER")) {
+            mainLayout.setCenter(employerAnalyticsUI.getView());
+        } else {
+            mainLayout.setCenter(jobList.getView());
+        }
     }
 
     private void createHeader() {
@@ -96,7 +104,11 @@ public class DashboardUI {
         btnViewApplicants.setMaxWidth(Double.MAX_VALUE);
 
         btnDashboard.setOnAction(e -> {
-             mainLayout.setCenter(jobList.getView());
+             if (currentUser.getRole().equals("EMPLOYER")) {
+                 mainLayout.setCenter(employerAnalyticsUI.getView());
+             } else {
+                 mainLayout.setCenter(jobList.getView());
+             }
              setActive(btnDashboard, btnApplications, btnSkills, btnProfile, btnViewApplicants);
         });
 

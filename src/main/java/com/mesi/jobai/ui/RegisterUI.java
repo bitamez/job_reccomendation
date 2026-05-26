@@ -6,53 +6,67 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 public class RegisterUI {
-    private VBox view;
+    private BorderPane view;
     private Stage stage;
     private UserDAO userDAO;
 
     public RegisterUI(Stage stage) {
         this.stage = stage;
         this.userDAO = new UserDAO();
-        view = new VBox(15);
-        view.setAlignment(Pos.CENTER);
-        view.setPadding(new Insets(40));
-        view.getStyleClass().add("content-area");
+        view = new BorderPane();
+        view.getStyleClass().add("root");
 
-        Label title = new Label("Join the AI Job Network");
-        title.setStyle("-fx-font-size: 24px; -fx-font-weight: bold;");
+        VBox formBox = new VBox(20);
+        formBox.setAlignment(Pos.CENTER);
+        formBox.setPadding(new Insets(40, 40, 40, 40));
+        formBox.setMaxWidth(450);
+        formBox.setMaxHeight(550);
+        formBox.getStyleClass().add("card");
+
+        Label title = new Label("Join AI Job Network");
+        title.setStyle("-fx-font-size: 26px; -fx-font-weight: 800; -fx-text-fill: -text-light;");
+
+        Label subtitle = new Label("Create a new account");
+        subtitle.setStyle("-fx-font-size: 15px; -fx-text-fill: -text-muted;");
 
         TextField nameField = new TextField();
         nameField.setPromptText("Full Name");
-        nameField.setMaxWidth(300);
+        nameField.setMaxWidth(Double.MAX_VALUE);
+        nameField.setPrefHeight(45);
 
         TextField emailField = new TextField();
-        emailField.setPromptText("Email");
-        emailField.setMaxWidth(300);
+        emailField.setPromptText("Email Address");
+        emailField.setMaxWidth(Double.MAX_VALUE);
+        emailField.setPrefHeight(45);
 
         PasswordField passwordField = new PasswordField();
         passwordField.setPromptText("Password");
-        passwordField.setMaxWidth(300);
+        passwordField.setMaxWidth(Double.MAX_VALUE);
+        passwordField.setPrefHeight(45);
 
         ComboBox<String> roleBox = new ComboBox<>();
         roleBox.getItems().addAll("APPLICANT", "EMPLOYER");
         roleBox.setValue("APPLICANT");
-        roleBox.setMaxWidth(300);
+        roleBox.setMaxWidth(Double.MAX_VALUE);
+        roleBox.setPrefHeight(45);
 
         Label errorLabel = new Label();
-        errorLabel.setStyle("-fx-text-fill: red;");
+        errorLabel.setStyle("-fx-text-fill: -error-color; -fx-font-weight: bold;");
         Label successLabel = new Label();
-        successLabel.setStyle("-fx-text-fill: green;");
+        successLabel.setStyle("-fx-text-fill: -success-color; -fx-font-weight: bold;");
 
-        Button registerBtn = new Button("Register");
+        Button registerBtn = new Button("Register Account");
         registerBtn.getStyleClass().add("btn-accent");
-        registerBtn.setMaxWidth(300);
+        registerBtn.setMaxWidth(Double.MAX_VALUE);
+        registerBtn.setPrefHeight(45);
 
-        Button loginLink = new Button("Already have an account? Login here");
-        loginLink.setStyle("-fx-background-color: transparent; -fx-text-fill: #007bff; -fx-cursor: hand;");
+        Button loginLink = new Button("Already have an account? Sign in");
+        loginLink.setStyle("-fx-background-color: transparent; -fx-text-fill: -accent-color; -fx-cursor: hand; -fx-font-weight: bold;");
 
         registerBtn.setOnAction(e -> {
             String name = nameField.getText();
@@ -70,8 +84,11 @@ public class RegisterUI {
             boolean success = userDAO.registerUser(newUser);
 
             if (success) {
-                successLabel.setText("Registration successful! You can now login.");
+                successLabel.setText("Registration successful! You can now sign in.");
                 errorLabel.setText("");
+                nameField.clear();
+                emailField.clear();
+                passwordField.clear();
             } else {
                 errorLabel.setText("Registration failed. Email might already exist.");
                 successLabel.setText("");
@@ -80,17 +97,18 @@ public class RegisterUI {
 
         loginLink.setOnAction(e -> {
             LoginUI loginUI = new LoginUI(stage);
-            Scene loginScene = new Scene(loginUI.getView(), 1000, 650);
+            Scene loginScene = new Scene(loginUI.getView(), 1050, 700);
             try {
                 loginScene.getStylesheets().add(getClass().getResource("/styles/style.css").toExternalForm());
             } catch (Exception ex) {}
             stage.setScene(loginScene);
         });
 
-        view.getChildren().addAll(title, nameField, emailField, passwordField, roleBox, errorLabel, successLabel, registerBtn, loginLink);
+        formBox.getChildren().addAll(title, subtitle, nameField, emailField, passwordField, roleBox, errorLabel, successLabel, registerBtn, loginLink);
+        view.setCenter(formBox);
     }
 
-    public VBox getView() {
+    public BorderPane getView() {
         return view;
     }
 }

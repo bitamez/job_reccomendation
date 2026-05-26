@@ -6,45 +6,54 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 public class LoginUI {
-    private VBox view;
+    private BorderPane view;
     private Stage stage;
     private UserDAO userDAO;
 
     public LoginUI(Stage stage) {
         this.stage = stage;
         this.userDAO = new UserDAO();
-        view = new VBox(15);
-        view.setAlignment(Pos.CENTER);
-        view.setPadding(new Insets(40));
-        view.getStyleClass().add("content-area");
+        view = new BorderPane();
+        view.getStyleClass().add("root");
 
-        Label title = new Label("AI Job Recommendation System");
-        title.setStyle("-fx-font-size: 24px; -fx-font-weight: bold;");
+        VBox formBox = new VBox(20);
+        formBox.setAlignment(Pos.CENTER);
+        formBox.setPadding(new Insets(50, 40, 50, 40));
+        formBox.setMaxWidth(450);
+        formBox.setMaxHeight(450);
+        formBox.getStyleClass().add("card");
 
-        Label subtitle = new Label("Login to your account");
-        subtitle.setStyle("-fx-font-size: 16px; -fx-text-fill: #555;");
+        Label title = new Label("AI Job Recommendation");
+        title.setStyle("-fx-font-size: 26px; -fx-font-weight: 800; -fx-text-fill: -text-light;");
+
+        Label subtitle = new Label("Sign in to your account");
+        subtitle.setStyle("-fx-font-size: 15px; -fx-text-fill: -text-muted;");
 
         TextField emailField = new TextField();
-        emailField.setPromptText("Email");
-        emailField.setMaxWidth(300);
+        emailField.setPromptText("Email Address");
+        emailField.setMaxWidth(Double.MAX_VALUE);
+        emailField.setPrefHeight(45);
 
         PasswordField passwordField = new PasswordField();
         passwordField.setPromptText("Password");
-        passwordField.setMaxWidth(300);
+        passwordField.setMaxWidth(Double.MAX_VALUE);
+        passwordField.setPrefHeight(45);
 
         Label errorLabel = new Label();
-        errorLabel.setStyle("-fx-text-fill: red;");
+        errorLabel.setStyle("-fx-text-fill: -error-color; -fx-font-weight: bold;");
 
         Button loginBtn = new Button("Login");
         loginBtn.getStyleClass().add("btn-accent");
-        loginBtn.setMaxWidth(300);
+        loginBtn.setMaxWidth(Double.MAX_VALUE);
+        loginBtn.setPrefHeight(45);
         
-        Button registerLink = new Button("Don't have an account? Register here");
-        registerLink.setStyle("-fx-background-color: transparent; -fx-text-fill: #007bff; -fx-cursor: hand;");
+        Button registerLink = new Button("Don't have an account? Register");
+        registerLink.setStyle("-fx-background-color: transparent; -fx-text-fill: -accent-color; -fx-cursor: hand; -fx-font-weight: bold;");
         
         loginBtn.setOnAction(e -> {
             String email = emailField.getText();
@@ -59,7 +68,7 @@ public class LoginUI {
             if (user != null) {
                 // Determine if Applicant or Employer
                 DashboardUI dashboard = new DashboardUI(user, stage);
-                Scene scene = new Scene(dashboard.getView(), 1000, 650);
+                Scene scene = new Scene(dashboard.getView(), 1050, 700);
                 try {
                     scene.getStylesheets().add(getClass().getResource("/styles/style.css").toExternalForm());
                 } catch (Exception ex) {}
@@ -71,17 +80,18 @@ public class LoginUI {
 
         registerLink.setOnAction(e -> {
             RegisterUI registerUI = new RegisterUI(stage);
-            Scene registerScene = new Scene(registerUI.getView(), 1000, 650);
+            Scene registerScene = new Scene(registerUI.getView(), 1050, 700);
             try {
                 registerScene.getStylesheets().add(getClass().getResource("/styles/style.css").toExternalForm());
             } catch (Exception ex) {}
             stage.setScene(registerScene);
         });
 
-        view.getChildren().addAll(title, subtitle, emailField, passwordField, errorLabel, loginBtn, registerLink);
+        formBox.getChildren().addAll(title, subtitle, emailField, passwordField, errorLabel, loginBtn, registerLink);
+        view.setCenter(formBox);
     }
 
-    public VBox getView() {
+    public BorderPane getView() {
         return view;
     }
 }

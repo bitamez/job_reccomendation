@@ -1,0 +1,33 @@
+===========================================
+APPLICATION STATUS CHANGE REPORT
+===========================================
+
+Report Generated: 2026-05-26 14:22:48
+
+APPLICATION DETAILS:
+Application ID: 7
+Status Change: pending ? INTERVIEW
+Applied Date: 2026-05-26 13:51:46.061758
+
+JOB DETAILS:
+Job ID: 2
+Job Title: senior java Developer
+Company: place tech
+Description: java development full time
+
+APPLICANT DETAILS:
+Applicant ID: 6
+Name: messi
+Email: meseret21@gmail.com
+
+EMPLOYER DETAILS:
+Employer ID: 9
+Name: hanan sisay
+Email: hanan@gmail.com
+
+ACTION SUMMARY:
+? Status updated to: INTERVIEW
+
+===========================================
+End of Report
+===========================================

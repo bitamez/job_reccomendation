@@ -112,4 +112,103 @@ public class ApplicationDAO {
             return false;
         }
     }
+
+    public List<Application> getAllApplications() {
+        List<Application> applications = new ArrayList<>();
+        String query = "SELECT a.*, j.title, c.name as company, u.full_name as applicant_name " +
+                       "FROM applications a " +
+                       "JOIN jobs j ON a.job_id = j.job_id " +
+                       "LEFT JOIN companies c ON j.company_id = c.company_id " +
+                       "JOIN users u ON a.user_id = u.user_id " +
+                       "ORDER BY a.applied_at DESC";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(query);
+             ResultSet rs = pstmt.executeQuery()) {
+            
+            while (rs.next()) {
+                Application app = new Application(
+                    rs.getInt("application_id"),
+                    rs.getInt("job_id"),
+                    rs.getInt("user_id"),
+                    rs.getString("status"),
+                    rs.getString("applied_at")
+                );
+                app.setJobTitle(rs.getString("title"));
+                app.setCompanyName(rs.getString("company") != null ? rs.getString("company") : "Unknown");
+                app.setApplicantName(rs.getString("applicant_name"));
+                applications.add(app);
+            }
+        } catch (SQLException e) {
+            System.err.println("Error fetching all applications: " + e.getMessage());
+        }
+        return applications;
+    }
+
+    public Application getApplicationById(int applicationId) {
+        String query = "SELECT a.*, j.title, c.name as company, u.full_name as applicant_name " +
+                       "FROM applications a " +
+                       "JOIN jobs j ON a.job_id = j.job_id " +
+                       "LEFT JOIN companies c ON j.company_id = c.company_id " +
+                       "JOIN users u ON a.user_id = u.user_id " +
+                       "WHERE a.application_id = ?";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+            
+            pstmt.setInt(1, applicationId);
+            
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    Application app = new Application(
+                        rs.getInt("application_id"),
+                        rs.getInt("job_id"),
+                        rs.getInt("user_id"),
+                        rs.getString("status"),
+                        rs.getString("applied_at")
+                    );
+                    app.setJobTitle(rs.getString("title"));
+                    app.setCompanyName(rs.getString("company") != null ? rs.getString("company") : "Unknown");
+                    app.setApplicantName(rs.getString("applicant_name"));
+                    return app;
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error fetching application by ID: " + e.getMessage());
+        }
+        return null;
+    }
+
+    public List<Application> getApplicationsByStatus(String status) {
+        List<Application> applications = new ArrayList<>();
+        String query = "SELECT a.*, j.title, c.name as company, u.full_name as applicant_name " +
+                       "FROM applications a " +
+                       "JOIN jobs j ON a.job_id = j.job_id " +
+                       "LEFT JOIN companies c ON j.company_id = c.company_id " +
+                       "JOIN users u ON a.user_id = u.user_id " +
+                       "WHERE a.status = ? " +
+                       "ORDER BY a.applied_at DESC";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+            
+            pstmt.setString(1, status);
+            
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    Application app = new Application(
+                        rs.getInt("application_id"),
+                        rs.getInt("job_id"),
+                        rs.getInt("user_id"),
+                        rs.getString("status"),
+                        rs.getString("applied_at")
+                    );
+                    app.setJobTitle(rs.getString("title"));
+                    app.setCompanyName(rs.getString("company") != null ? rs.getString("company") : "Unknown");
+                    app.setApplicantName(rs.getString("applicant_name"));
+                    applications.add(app);
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error fetching applications by status: " + e.getMessage());
+        }
+        return applications;
+    }
 }

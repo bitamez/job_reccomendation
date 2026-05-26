@@ -67,4 +67,36 @@ public class JobDAO {
         }
         return jobs;
     }
+
+    public Job getJobById(int jobId) {
+        String query = "SELECT j.job_id, j.title, c.name as company, j.description, j.location " +
+                       "FROM jobs j LEFT JOIN companies c ON j.company_id = c.company_id " +
+                       "WHERE j.job_id = ?";
+        try (Connection conn = DBConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+            
+            pstmt.setInt(1, jobId);
+            
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return new Job(
+                        rs.getInt("job_id"),
+                        0,
+                        rs.getString("title"),
+                        rs.getString("company") != null ? rs.getString("company") : "Unknown",
+                        rs.getString("description"),
+                        rs.getString("location")
+                    );
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error fetching job by ID: " + e.getMessage());
+        }
+        return null;
+    }
+
+    public List<Job> getJobsByEmployerId(int employerId) {
+        // Since the schema doesn't have employer_id in jobs table, return all jobs
+        return getAllJobs();
+    }
 }

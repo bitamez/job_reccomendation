@@ -1,6 +1,6 @@
 package com.mesi.jobai.ui;
 
-import com.mesi.jobai.dao.ApplicationDAO;
+import com.mesi.jobai.controller.ApplicationController;
 import com.mesi.jobai.model.Application;
 import com.mesi.jobai.model.User;
 import javafx.beans.property.SimpleStringProperty;
@@ -17,11 +17,11 @@ import java.util.List;
 public class ApplicationsUI {
     private VBox view;
     private User currentUser;
-    private ApplicationDAO applicationDAO;
+    private ApplicationController applicationController;
 
     public ApplicationsUI(User currentUser) {
         this.currentUser = currentUser;
-        this.applicationDAO = new ApplicationDAO();
+        this.applicationController = new ApplicationController();
         
         view = new VBox(25);
         view.getStyleClass().add("content-area");
@@ -57,7 +57,7 @@ public class ApplicationsUI {
 
         table.getColumns().addAll(titleCol, companyCol, statusCol, dateCol);
 
-        List<Application> dbApps = applicationDAO.getApplicationsForUser(currentUser.getId());
+        List<Application> dbApps = applicationController.getApplicationsForUser(currentUser.getId());
         ObservableList<Application> data = FXCollections.observableArrayList(dbApps);
         table.setItems(data);
 

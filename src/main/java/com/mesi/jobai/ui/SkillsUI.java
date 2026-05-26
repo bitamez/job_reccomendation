@@ -1,6 +1,6 @@
 package com.mesi.jobai.ui;
 
-import com.mesi.jobai.dao.SkillDAO;
+import com.mesi.jobai.controller.RecommendationController;
 import com.mesi.jobai.model.Skill;
 import com.mesi.jobai.model.User;
 import javafx.beans.property.SimpleStringProperty;
@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
 public class SkillsUI {
     private VBox view;
     private User currentUser;
-    private SkillDAO skillDAO;
+    private RecommendationController recommendationController;
     private TableView<Skill> table;
 
     // Hardcoded common tech keywords for the simple internal AI Parser
@@ -30,7 +30,7 @@ public class SkillsUI {
 
     public SkillsUI(User currentUser) {
         this.currentUser = currentUser;
-        this.skillDAO = new SkillDAO();
+        this.recommendationController = new RecommendationController();
         view = new VBox(25);
         view.getStyleClass().add("content-area");
 
@@ -76,7 +76,7 @@ public class SkillsUI {
             }
             
             Skill newSkill = new Skill(0, currentUser.getId(), name, prof);
-            if (skillDAO.addSkill(newSkill)) {
+            if (recommendationController.addUserSkill(newSkill)) {
                 statusLabel.setText("Skill added.");
                 statusLabel.setStyle("-fx-text-fill: -success-color;");
                 skillNameField.clear();
@@ -118,7 +118,7 @@ public class SkillsUI {
             
             int addedCount = 0;
             // Existing skills to avoid duplicates
-            List<Skill> existingSkills = skillDAO.getSkillsForUser(currentUser.getId());
+            List<Skill> existingSkills = recommendationController.getUserSkills(currentUser.getId());
             
             for (String keyword : AI_KEYWORDS) {
                 // Check if keyword is in the resume via regex boundaries
@@ -130,7 +130,7 @@ public class SkillsUI {
                     
                     if (!alreadyExists) {
                         Skill parsedSkill = new Skill(0, currentUser.getId(), keyword, "Intermediate");
-                        if (skillDAO.addSkill(parsedSkill)) {
+                        if (recommendationController.addUserSkill(parsedSkill)) {
                             addedCount++;
                         }
                     }
@@ -176,7 +176,7 @@ public class SkillsUI {
                 deleteBtn.setStyle("-fx-background-color: transparent; -fx-text-fill: -error-color; -fx-cursor: hand; -fx-font-weight: bold;");
                 deleteBtn.setOnAction(e -> {
                     Skill skill = getTableView().getItems().get(getIndex());
-                    if (skillDAO.removeSkill(skill.getId())) {
+                    if (recommendationController.removeUserSkill(skill.getId())) {
                         refreshTable();
                     }
                 });
@@ -200,7 +200,7 @@ public class SkillsUI {
     }
 
     private void refreshTable() {
-        List<Skill> dbSkills = skillDAO.getSkillsForUser(currentUser.getId());
+        List<Skill> dbSkills = recommendationController.getUserSkills(currentUser.getId());
         ObservableList<Skill> data = FXCollections.observableArrayList(dbSkills);
         table.setItems(data);
     }

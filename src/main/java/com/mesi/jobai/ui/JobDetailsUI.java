@@ -1,6 +1,6 @@
 package com.mesi.jobai.ui;
 
-import com.mesi.jobai.dao.ApplicationDAO;
+import com.mesi.jobai.controller.ApplicationController;
 import com.mesi.jobai.model.Job;
 import com.mesi.jobai.model.User;
 import javafx.geometry.Insets;
@@ -12,10 +12,10 @@ import javafx.scene.layout.VBox;
 
 public class JobDetailsUI {
     private VBox view;
-    private ApplicationDAO applicationDAO;
+    private ApplicationController applicationController;
 
     public JobDetailsUI(DashboardUI dashboard, Job job, String matchScore, User currentUser) {
-        this.applicationDAO = new ApplicationDAO();
+        this.applicationController = new ApplicationController();
         view = new VBox(25);
         view.getStyleClass().add("content-area");
         view.setAlignment(Pos.TOP_LEFT);
@@ -61,7 +61,7 @@ public class JobDetailsUI {
         btnApply.setPrefHeight(40);
         
         btnApply.setOnAction(e -> {
-            if (applicationDAO.applyForJob(job.getId(), currentUser.getId())) {
+            if (applicationController.applyForJob(job.getId(), currentUser.getId())) {
                 statusLabel.setText("Successfully Applied!");
                 statusLabel.setStyle("-fx-text-fill: -success-color;");
                 btnApply.setDisable(true);

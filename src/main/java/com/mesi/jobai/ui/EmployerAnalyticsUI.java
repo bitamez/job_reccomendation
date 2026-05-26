@@ -1,6 +1,6 @@
 package com.mesi.jobai.ui;
 
-import com.mesi.jobai.dao.ApplicationDAO;
+import com.mesi.jobai.controller.ApplicationController;
 import com.mesi.jobai.model.Application;
 import com.mesi.jobai.model.User;
 import javafx.geometry.Insets;
@@ -14,11 +14,11 @@ import java.util.List;
 public class EmployerAnalyticsUI {
     private VBox view;
     private User currentUser;
-    private ApplicationDAO applicationDAO;
+    private ApplicationController applicationController;
 
     public EmployerAnalyticsUI(User currentUser) {
         this.currentUser = currentUser;
-        this.applicationDAO = new ApplicationDAO();
+        this.applicationController = new ApplicationController();
         
         view = new VBox(25);
         view.getStyleClass().add("content-area");
@@ -26,7 +26,7 @@ public class EmployerAnalyticsUI {
         Label sectionTitle = new Label("Employer Analytics Dashboard");
         sectionTitle.setStyle("-fx-font-size: 28px; -fx-font-weight: 800; -fx-text-fill: -text-light;");
         
-        List<Application> allApps = applicationDAO.getApplicationsForEmployer(currentUser.getId());
+        List<Application> allApps = applicationController.getApplicationsForEmployer(currentUser.getId());
         
         int total = allApps.size();
         int pending = 0;

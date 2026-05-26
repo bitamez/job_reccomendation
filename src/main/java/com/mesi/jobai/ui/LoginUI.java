@@ -1,6 +1,6 @@
 package com.mesi.jobai.ui;
 
-import com.mesi.jobai.dao.UserDAO;
+import com.mesi.jobai.controller.AuthController;
 import com.mesi.jobai.model.User;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -13,11 +13,11 @@ import javafx.stage.Stage;
 public class LoginUI {
     private BorderPane view;
     private Stage stage;
-    private UserDAO userDAO;
+    private AuthController authController;
 
     public LoginUI(Stage stage) {
         this.stage = stage;
-        this.userDAO = new UserDAO();
+        this.authController = new AuthController();
         view = new BorderPane();
         view.getStyleClass().add("root");
 
@@ -64,7 +64,7 @@ public class LoginUI {
                 return;
             }
             
-            User user = userDAO.loginUser(email, password);
+            User user = authController.login(email, password);
             if (user != null) {
                 // Determine if Applicant or Employer
                 DashboardUI dashboard = new DashboardUI(user, stage);

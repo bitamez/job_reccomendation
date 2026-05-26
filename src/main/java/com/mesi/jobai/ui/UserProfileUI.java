@@ -1,6 +1,6 @@
 package com.mesi.jobai.ui;
 
-import com.mesi.jobai.dao.UserDAO;
+import com.mesi.jobai.controller.AuthController;
 import com.mesi.jobai.model.User;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -12,11 +12,11 @@ import javafx.scene.layout.VBox;
 public class UserProfileUI {
     private VBox view;
     private User currentUser;
-    private UserDAO userDAO;
+    private AuthController authController;
 
     public UserProfileUI(User currentUser) {
         this.currentUser = currentUser;
-        this.userDAO = new UserDAO();
+        this.authController = new AuthController();
         view = new VBox(25);
         view.getStyleClass().add("content-area");
         view.setAlignment(Pos.TOP_LEFT);
@@ -64,7 +64,7 @@ public class UserProfileUI {
             currentUser.setName(newName);
             currentUser.setEmail(newEmail);
             
-            if (userDAO.updateUser(currentUser)) {
+            if (authController.updateProfile(currentUser)) {
                 statusLabel.setText("Profile updated successfully!");
                 statusLabel.setStyle("-fx-text-fill: -success-color;");
             } else {

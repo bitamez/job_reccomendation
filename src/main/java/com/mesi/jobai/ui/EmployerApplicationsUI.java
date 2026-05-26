@@ -1,6 +1,6 @@
 package com.mesi.jobai.ui;
 
-import com.mesi.jobai.dao.ApplicationDAO;
+import com.mesi.jobai.controller.ApplicationController;
 import com.mesi.jobai.model.Application;
 import com.mesi.jobai.model.User;
 import javafx.beans.property.SimpleStringProperty;
@@ -19,11 +19,11 @@ import java.util.List;
 public class EmployerApplicationsUI {
     private VBox view;
     private User currentUser;
-    private ApplicationDAO applicationDAO;
+    private ApplicationController applicationController;
 
     public EmployerApplicationsUI(User currentUser) {
         this.currentUser = currentUser;
-        this.applicationDAO = new ApplicationDAO();
+        this.applicationController = new ApplicationController();
         
         view = new VBox(25);
         view.getStyleClass().add("content-area");
@@ -59,7 +59,7 @@ public class EmployerApplicationsUI {
                     Application app = getTableView().getItems().get(getIndex());
                     String newStatus = statusBox.getValue();
                     if (newStatus != null && !newStatus.equals(app.getStatus())) {
-                        if (applicationDAO.updateApplicationStatus(app.getId(), newStatus)) {
+                        if (applicationController.updateApplicationStatus(app.getId(), newStatus)) {
                             app.setStatus(newStatus); // Update local model
                         }
                     }
@@ -86,7 +86,7 @@ public class EmployerApplicationsUI {
 
         table.getColumns().addAll(applicantCol, titleCol, statusCol, dateCol);
 
-        List<Application> dbApps = applicationDAO.getApplicationsForEmployer(currentUser.getId());
+        List<Application> dbApps = applicationController.getApplicationsForEmployer(currentUser.getId());
         ObservableList<Application> data = FXCollections.observableArrayList(dbApps);
         table.setItems(data);
 

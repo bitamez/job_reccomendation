@@ -1,6 +1,6 @@
 package com.mesi.jobai.ui;
 
-import com.mesi.jobai.dao.UserDAO;
+import com.mesi.jobai.controller.AuthController;
 import com.mesi.jobai.model.User;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -13,11 +13,11 @@ import javafx.stage.Stage;
 public class RegisterUI {
     private BorderPane view;
     private Stage stage;
-    private UserDAO userDAO;
+    private AuthController authController;
 
     public RegisterUI(Stage stage) {
         this.stage = stage;
-        this.userDAO = new UserDAO();
+        this.authController = new AuthController();
         view = new BorderPane();
         view.getStyleClass().add("root");
 
@@ -80,8 +80,7 @@ public class RegisterUI {
                 return;
             }
 
-            User newUser = new User(0, name, email, password, role);
-            boolean success = userDAO.registerUser(newUser);
+            boolean success = authController.register(name, email, password, role);
 
             if (success) {
                 successLabel.setText("Registration successful! You can now sign in.");

@@ -9,8 +9,8 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
-import com.mesi.jobai.dao.JobDAO;
-import com.mesi.jobai.dao.SkillDAO;
+import com.mesi.jobai.controller.JobController;
+import com.mesi.jobai.controller.RecommendationController;
 import com.mesi.jobai.model.Job;
 import com.mesi.jobai.model.Skill;
 import com.mesi.jobai.service.AIService;
@@ -48,11 +48,11 @@ public class JobListUI {
         topArea.getChildren().addAll(recommendedTitle, spacer, searchField);
         view.getChildren().addAll(sectionTitle, topArea);
 
-        JobDAO jobDAO = new JobDAO();
-        allJobs = jobDAO.getAllJobs();
+        JobController jobController = new JobController();
+        allJobs = jobController.getAllJobs();
         
-        SkillDAO skillDAO = new SkillDAO();
-        userSkills = skillDAO.getSkillsForUser(dashboard.getCurrentUser().getId());
+        RecommendationController recommendationController = new RecommendationController();
+        userSkills = recommendationController.getUserSkills(dashboard.getCurrentUser().getId());
 
         jobListContainer = new VBox(15);
         jobListContainer.setMaxWidth(850);

@@ -1,6 +1,6 @@
 package com.mesi.jobai.ui;
 
-import com.mesi.jobai.dao.JobDAO;
+import com.mesi.jobai.controller.JobController;
 import com.mesi.jobai.model.Job;
 import com.mesi.jobai.model.User;
 import javafx.geometry.Insets;
@@ -14,7 +14,7 @@ import javafx.scene.layout.VBox;
 public class PostJobUI {
     private VBox view;
     private User currentUser;
-    private JobDAO jobDAO;
+    private JobController jobController;
 
     private static final String[] KEYWORDS = {
         "Java", "Python", "React", "Angular", "Vue", "AWS", "Docker", "SQL", "Management"
@@ -22,7 +22,7 @@ public class PostJobUI {
 
     public PostJobUI(User currentUser) {
         this.currentUser = currentUser;
-        this.jobDAO = new JobDAO();
+        this.jobController = new JobController();
         
         view = new VBox(20);
         view.getStyleClass().add("content-area");
@@ -119,8 +119,7 @@ public class PostJobUI {
                 return;
             }
 
-            Job job = new Job(0, currentUser.getId(), title, comp, desc, req);
-            if (jobDAO.createJob(job)) {
+            if (jobController.createJob(currentUser.getId(), title, comp, desc, req)) {
                 statusLabel.setText("Job posted successfully!");
                 statusLabel.setStyle("-fx-text-fill: -success-color; -fx-font-weight: bold;");
                 titleField.clear();

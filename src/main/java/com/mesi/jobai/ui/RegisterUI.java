@@ -3,9 +3,12 @@ package com.mesi.jobai.ui;
 import com.mesi.jobai.controller.AuthController;
 import com.mesi.jobai.model.User;
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class RegisterUI {
     private JPanel view;
@@ -15,100 +18,127 @@ public class RegisterUI {
     public RegisterUI(JFrame parentFrame) {
         this.parentFrame = parentFrame;
         this.authController = new AuthController();
+        initializeUI();
+    }
+
+    private void initializeUI() {
         view = new JPanel(new BorderLayout());
-        view.setBackground(SystemColors.BACKGROUND);
+        view.setBackground(new Color(240, 242, 245)); // Light gray background
+        
+        // Create form panel
+        JPanel formPanel = createFormPanel();
+        
+        // Center the form
+        JPanel centerPanel = new JPanel(new GridBagLayout());
+        centerPanel.setBackground(new Color(240, 242, 245));
+        centerPanel.add(formPanel);
+        
+        view.add(centerPanel, BorderLayout.CENTER);
+    }
 
-        JPanel formPanel = new JPanel();
-        formPanel.setLayout(new BoxLayout(formPanel, BoxLayout.Y_AXIS));
-        formPanel.setBackground(SystemColors.SURFACE);
-        formPanel.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createEmptyBorder(40, 40, 40, 40),
-            BorderFactory.createEmptyBorder(20, 20, 20, 20)
+    private JPanel createFormPanel() {
+        JPanel formBox = new JPanel();
+        formBox.setLayout(new BoxLayout(formBox, BoxLayout.Y_AXIS));
+        formBox.setBackground(Color.WHITE);
+        formBox.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(new Color(220, 220, 220), 1),
+            new EmptyBorder(30, 40, 30, 40)
         ));
+        formBox.setPreferredSize(new Dimension(420, 520));
 
+        // Title
         JLabel title = new JLabel("Join AI Job Network");
-        title.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 26));
-        title.setForeground(SystemColors.TEXT_PRIMARY);
+        title.setFont(new Font("Segoe UI", Font.BOLD, 24));
+        title.setForeground(new Color(30, 30, 30));
         title.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         JLabel subtitle = new JLabel("Create a new account");
-        subtitle.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 15));
-        subtitle.setForeground(SystemColors.TEXT_SECONDARY);
+        subtitle.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        subtitle.setForeground(new Color(100, 100, 100));
         subtitle.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        JTextField nameField = new JTextField();
-        nameField.setMaximumSize(new Dimension(350, 45));
-        nameField.setPreferredSize(new Dimension(350, 45));
-        nameField.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(SystemColors.BORDER, 1),
-            BorderFactory.createEmptyBorder(10, 15, 10, 15)
-        ));
-        nameField.setBackground(SystemColors.BACKGROUND);
-        nameField.setForeground(SystemColors.TEXT_PRIMARY);
-
-        JTextField emailField = new JTextField();
-        emailField.setMaximumSize(new Dimension(350, 45));
-        emailField.setPreferredSize(new Dimension(350, 45));
-        emailField.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(SystemColors.BORDER, 1),
-            BorderFactory.createEmptyBorder(10, 15, 10, 15)
-        ));
-        emailField.setBackground(SystemColors.BACKGROUND);
-        emailField.setForeground(SystemColors.TEXT_PRIMARY);
-
-        JPasswordField passwordField = new JPasswordField();
-        passwordField.setMaximumSize(new Dimension(350, 45));
-        passwordField.setPreferredSize(new Dimension(350, 45));
-        passwordField.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(SystemColors.BORDER, 1),
-            BorderFactory.createEmptyBorder(10, 15, 10, 15)
-        ));
-        passwordField.setBackground(SystemColors.BACKGROUND);
-        passwordField.setForeground(SystemColors.TEXT_PRIMARY);
-
+        // Create form fields panel with GridBagLayout
+        JPanel fieldsPanel = new JPanel(new GridBagLayout());
+        fieldsPanel.setBackground(Color.WHITE);
+        GridBagConstraints gbc = new GridBagConstraints();
+        
+        // Create form fields
+        JTextField nameField = createStyledTextField();
+        JTextField emailField = createStyledTextField();
+        JPasswordField passwordField = createStyledPasswordField();
+        
         JComboBox<String> roleBox = new JComboBox<>(new String[]{"APPLICANT", "EMPLOYER"});
         roleBox.setSelectedItem("APPLICANT");
-        roleBox.setMaximumSize(new Dimension(350, 45));
-        roleBox.setPreferredSize(new Dimension(350, 45));
-        roleBox.setBackground(SystemColors.BACKGROUND);
-        roleBox.setForeground(SystemColors.TEXT_PRIMARY);
+        roleBox.setPreferredSize(new Dimension(320, 38));
+        roleBox.setBackground(new Color(250, 250, 250));
+        roleBox.setForeground(new Color(30, 30, 30));
+        roleBox.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        roleBox.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 200), 1));
 
-        JLabel errorLabel = new JLabel();
-        errorLabel.setForeground(Color.RED);
-        errorLabel.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 12));
+        // Create labels
+        JLabel nameLabel = createFieldLabel("Full Name");
+        JLabel emailLabel = createFieldLabel("Email Address");
+        JLabel passwordLabel = createFieldLabel("Password");
+        JLabel roleLabel = createFieldLabel("Account Type");
+
+        // Layout fields
+        int row = 0;
+        addFieldToPanel(fieldsPanel, nameLabel, nameField, gbc, row++);
+        addFieldToPanel(fieldsPanel, emailLabel, emailField, gbc, row++);
+        addFieldToPanel(fieldsPanel, passwordLabel, passwordField, gbc, row++);
+        addFieldToPanel(fieldsPanel, roleLabel, roleBox, gbc, row++);
+
+        // Error and success labels
+        JLabel errorLabel = new JLabel(" ");
+        errorLabel.setForeground(new Color(220, 53, 69));
+        errorLabel.setFont(new Font("Segoe UI", Font.BOLD, 12));
         errorLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
         
-        JLabel successLabel = new JLabel();
+        JLabel successLabel = new JLabel(" ");
         successLabel.setForeground(new Color(34, 139, 34));
-        successLabel.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 12));
+        successLabel.setFont(new Font("Segoe UI", Font.BOLD, 12));
         successLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
+        // Register button
         JButton registerBtn = new JButton("Register Account");
-        registerBtn.setMaximumSize(new Dimension(350, 45));
-        registerBtn.setPreferredSize(new Dimension(350, 45));
-        registerBtn.setBackground(SystemColors.PRIMARY);
-        registerBtn.setForeground(Color.BLACK);
+        registerBtn.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        registerBtn.setBackground(new Color(52, 152, 219));
+        registerBtn.setForeground(Color.WHITE);
         registerBtn.setBorder(BorderFactory.createEmptyBorder(12, 20, 12, 20));
         registerBtn.setFocusPainted(false);
         registerBtn.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        registerBtn.setPreferredSize(new Dimension(320, 42));
+        registerBtn.setMaximumSize(new Dimension(Integer.MAX_VALUE, 42));
+        registerBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
 
+        // Add hover effect
+        registerBtn.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                registerBtn.setBackground(new Color(41, 128, 185));
+            }
+            
+            @Override
+            public void mouseExited(MouseEvent e) {
+                registerBtn.setBackground(new Color(52, 152, 219));
+            }
+        });
+
+        // Login link
         JButton loginLink = new JButton("Already have an account? Sign in");
-        loginLink.setBackground(new Color(0, 0, 0, 0));
-        loginLink.setForeground(SystemColors.PRIMARY);
-        loginLink.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        loginLink.setFocusPainted(false);
-        loginLink.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        styleLoginLink(loginLink);
         loginLink.setAlignmentX(Component.CENTER_ALIGNMENT);
 
+        // Add action listeners
         registerBtn.addActionListener(e -> {
-            String name = nameField.getText();
-            String email = emailField.getText();
+            String name = nameField.getText().trim();
+            String email = emailField.getText().trim();
             String password = new String(passwordField.getPassword());
             String role = (String) roleBox.getSelectedItem();
 
             if (name.isEmpty() || email.isEmpty() || password.isEmpty()) {
                 errorLabel.setText("Please fill all fields.");
-                successLabel.setText("");
+                successLabel.setText(" ");
                 return;
             }
 
@@ -116,13 +146,13 @@ public class RegisterUI {
 
             if (success) {
                 successLabel.setText("Registration successful! You can now sign in.");
-                errorLabel.setText("");
+                errorLabel.setText(" ");
                 nameField.setText("");
                 emailField.setText("");
                 passwordField.setText("");
             } else {
                 errorLabel.setText("Registration failed. Email might already exist.");
-                successLabel.setText("");
+                successLabel.setText(" ");
             }
         });
 
@@ -133,55 +163,89 @@ public class RegisterUI {
             });
         });
 
-        // Add placeholder labels
-        JLabel namePlaceholder = new JLabel("Full Name");
-        namePlaceholder.setForeground(SystemColors.TEXT_SECONDARY);
-        namePlaceholder.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 12));
-        namePlaceholder.setAlignmentX(Component.CENTER_ALIGNMENT);
+        // Add components with compact spacing
+        formBox.add(title);
+        formBox.add(Box.createVerticalStrut(6));
+        formBox.add(subtitle);
+        formBox.add(Box.createVerticalStrut(25));
+        formBox.add(fieldsPanel);
+        formBox.add(Box.createVerticalStrut(8));
+        formBox.add(errorLabel);
+        formBox.add(successLabel);
+        formBox.add(Box.createVerticalStrut(20));
+        formBox.add(registerBtn);
+        formBox.add(Box.createVerticalStrut(15));
+        formBox.add(loginLink);
 
-        JLabel emailPlaceholder = new JLabel("Email Address");
-        emailPlaceholder.setForeground(SystemColors.TEXT_SECONDARY);
-        emailPlaceholder.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 12));
-        emailPlaceholder.setAlignmentX(Component.CENTER_ALIGNMENT);
+        return formBox;
+    }
 
-        JLabel passwordPlaceholder = new JLabel("Password");
-        passwordPlaceholder.setForeground(SystemColors.TEXT_SECONDARY);
-        passwordPlaceholder.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 12));
-        passwordPlaceholder.setAlignmentX(Component.CENTER_ALIGNMENT);
+    private JTextField createStyledTextField() {
+        JTextField field = new JTextField();
+        field.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        field.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(new Color(200, 200, 200), 1),
+            BorderFactory.createEmptyBorder(10, 12, 10, 12)
+        ));
+        field.setBackground(new Color(250, 250, 250));
+        field.setForeground(new Color(30, 30, 30));
+        field.setPreferredSize(new Dimension(320, 38));
+        return field;
+    }
 
-        formPanel.add(Box.createVerticalStrut(20));
-        formPanel.add(title);
-        formPanel.add(Box.createVerticalStrut(10));
-        formPanel.add(subtitle);
-        formPanel.add(Box.createVerticalStrut(30));
-        formPanel.add(namePlaceholder);
-        formPanel.add(Box.createVerticalStrut(5));
-        formPanel.add(nameField);
-        formPanel.add(Box.createVerticalStrut(15));
-        formPanel.add(emailPlaceholder);
-        formPanel.add(Box.createVerticalStrut(5));
-        formPanel.add(emailField);
-        formPanel.add(Box.createVerticalStrut(15));
-        formPanel.add(passwordPlaceholder);
-        formPanel.add(Box.createVerticalStrut(5));
-        formPanel.add(passwordField);
-        formPanel.add(Box.createVerticalStrut(15));
-        formPanel.add(roleBox);
-        formPanel.add(Box.createVerticalStrut(15));
-        formPanel.add(errorLabel);
-        formPanel.add(successLabel);
-        formPanel.add(Box.createVerticalStrut(15));
-        formPanel.add(registerBtn);
-        formPanel.add(Box.createVerticalStrut(15));
-        formPanel.add(loginLink);
-        formPanel.add(Box.createVerticalStrut(20));
+    private JPasswordField createStyledPasswordField() {
+        JPasswordField field = new JPasswordField();
+        field.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        field.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(new Color(200, 200, 200), 1),
+            BorderFactory.createEmptyBorder(10, 12, 10, 12)
+        ));
+        field.setBackground(new Color(250, 250, 250));
+        field.setForeground(new Color(30, 30, 30));
+        field.setPreferredSize(new Dimension(320, 38));
+        return field;
+    }
 
-        // Center the form panel
-        JPanel centerPanel = new JPanel(new GridBagLayout());
-        centerPanel.setBackground(SystemColors.BACKGROUND);
-        centerPanel.add(formPanel);
+    private JLabel createFieldLabel(String text) {
+        JLabel label = new JLabel(text);
+        label.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        label.setForeground(new Color(80, 80, 80));
+        return label;
+    }
 
-        view.add(centerPanel, BorderLayout.CENTER);
+    private void addFieldToPanel(JPanel panel, JLabel label, JComponent field, GridBagConstraints gbc, int row) {
+        gbc.gridx = 0; gbc.gridy = row * 2;
+        gbc.anchor = GridBagConstraints.WEST;
+        gbc.insets = new Insets(0, 0, 5, 0);
+        gbc.fill = GridBagConstraints.NONE;
+        panel.add(label, gbc);
+        
+        gbc.gridy = row * 2 + 1;
+        gbc.insets = new Insets(0, 0, 15, 0);
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        panel.add(field, gbc);
+    }
+
+    private void styleLoginLink(JButton button) {
+        button.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        button.setForeground(new Color(52, 152, 219));
+        button.setBackground(new Color(0, 0, 0, 0));
+        button.setBorder(new EmptyBorder(8, 8, 8, 8));
+        button.setContentAreaFilled(false);
+        button.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        
+        // Hover effect
+        button.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                button.setForeground(new Color(41, 128, 185));
+            }
+            
+            @Override
+            public void mouseExited(MouseEvent e) {
+                button.setForeground(new Color(52, 152, 219));
+            }
+        });
     }
 
     public JPanel getView() {

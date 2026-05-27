@@ -133,7 +133,7 @@ public class UnifiedLoginUI extends JFrame {
         JButton loginBtn = new JButton("Login");
         loginBtn.setFont(new Font("Segoe UI", Font.BOLD, 14));
         loginBtn.setBackground(new Color(52, 152, 219));
-        loginBtn.setForeground(Color.WHITE);
+        loginBtn.setForeground(Color.BLACK);
         loginBtn.setBorder(BorderFactory.createEmptyBorder(12, 20, 12, 20));
         loginBtn.setFocusPainted(false);
         loginBtn.setCursor(new Cursor(Cursor.HAND_CURSOR));
@@ -146,11 +146,13 @@ public class UnifiedLoginUI extends JFrame {
             @Override
             public void mouseEntered(MouseEvent e) {
                 loginBtn.setBackground(new Color(41, 128, 185));
+                loginBtn.setForeground(Color.BLACK);
             }
             
             @Override
             public void mouseExited(MouseEvent e) {
                 loginBtn.setBackground(new Color(52, 152, 219));
+                loginBtn.setForeground(Color.BLACK);
             }
         });
         
@@ -252,7 +254,7 @@ public class UnifiedLoginUI extends JFrame {
         RegisterUI registerUI = new RegisterUI(registerFrame);
         registerFrame.setContentPane(registerUI.getView());
         registerFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        registerFrame.setSize(500, 600);
+        registerFrame.setSize(500, 620);
         registerFrame.setLocationRelativeTo(null);
         registerFrame.setVisible(true);
     }

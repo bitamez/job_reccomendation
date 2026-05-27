@@ -85,7 +85,7 @@ public class AdminDashboardUI extends JFrame {
 
     private void styleLogoutButton(JButton button) {
         button.setFont(new Font("Segoe UI", Font.BOLD, 13));
-        button.setForeground(Color.WHITE);
+        button.setForeground(Color.BLACK);
         button.setBackground(new Color(231, 76, 60)); // Professional red
         button.setBorder(new EmptyBorder(10, 20, 10, 20));
         button.setFocusPainted(false);
@@ -95,11 +95,13 @@ public class AdminDashboardUI extends JFrame {
             @Override
             public void mouseEntered(MouseEvent e) {
                 button.setBackground(new Color(192, 57, 43)); // Darker red on hover
+                button.setForeground(Color.BLACK);
             }
             
             @Override
             public void mouseExited(MouseEvent e) {
                 button.setBackground(new Color(231, 76, 60));
+                button.setForeground(Color.BLACK);
             }
         });
     }

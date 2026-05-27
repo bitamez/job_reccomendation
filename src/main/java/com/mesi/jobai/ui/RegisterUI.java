@@ -44,7 +44,7 @@ public class RegisterUI {
             BorderFactory.createLineBorder(new Color(220, 220, 220), 1),
             new EmptyBorder(30, 40, 30, 40)
         ));
-        formBox.setPreferredSize(new Dimension(420, 520));
+        formBox.setPreferredSize(new Dimension(420, 540));
 
         // Title
         JLabel title = new JLabel("Join AI Job Network");
@@ -103,7 +103,7 @@ public class RegisterUI {
         JButton registerBtn = new JButton("Register Account");
         registerBtn.setFont(new Font("Segoe UI", Font.BOLD, 14));
         registerBtn.setBackground(new Color(52, 152, 219));
-        registerBtn.setForeground(Color.WHITE);
+        registerBtn.setForeground(Color.BLACK);
         registerBtn.setBorder(BorderFactory.createEmptyBorder(12, 20, 12, 20));
         registerBtn.setFocusPainted(false);
         registerBtn.setCursor(new Cursor(Cursor.HAND_CURSOR));
@@ -116,11 +116,13 @@ public class RegisterUI {
             @Override
             public void mouseEntered(MouseEvent e) {
                 registerBtn.setBackground(new Color(41, 128, 185));
+                registerBtn.setForeground(Color.BLACK);
             }
             
             @Override
             public void mouseExited(MouseEvent e) {
                 registerBtn.setBackground(new Color(52, 152, 219));
+                registerBtn.setForeground(Color.BLACK);
             }
         });
 

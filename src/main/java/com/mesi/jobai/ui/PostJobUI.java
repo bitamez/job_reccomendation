@@ -3,16 +3,11 @@ package com.mesi.jobai.ui;
 import com.mesi.jobai.controller.JobController;
 import com.mesi.jobai.model.Job;
 import com.mesi.jobai.model.User;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.scene.control.*;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.Region;
-import javafx.scene.layout.VBox;
+import javax.swing.*;
+import java.awt.*;
 
 public class PostJobUI {
-    private VBox view;
+    private JPanel view;
     private User currentUser;
     private JobController jobController;
 
@@ -24,56 +19,109 @@ public class PostJobUI {
         this.currentUser = currentUser;
         this.jobController = new JobController();
         
-        view = new VBox(20);
-        view.getStyleClass().add("content-area");
-        view.setAlignment(Pos.TOP_LEFT);
+        view = new JPanel();
+        view.setLayout(new BoxLayout(view, BoxLayout.Y_AXIS));
+        view.setBackground(SystemColors.BACKGROUND);
+        view.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
-        Label sectionTitle = new Label("Post a New Job");
-        sectionTitle.setStyle("-fx-font-size: 28px; -fx-font-weight: 800; -fx-text-fill: -text-light;");
+        JLabel sectionTitle = new JLabel("Post a New Job");
+        sectionTitle.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 28));
+        sectionTitle.setForeground(SystemColors.TEXT_PRIMARY);
+        sectionTitle.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        VBox formCard = new VBox(15);
-        formCard.getStyleClass().add("card");
-        formCard.setPadding(new Insets(30));
-        formCard.setMaxWidth(600);
+        JPanel formCard = new JPanel();
+        formCard.setLayout(new BoxLayout(formCard, BoxLayout.Y_AXIS));
+        formCard.setBackground(SystemColors.SURFACE);
+        formCard.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(SystemColors.BORDER, 1),
+            BorderFactory.createEmptyBorder(30, 30, 30, 30)
+        ));
+        formCard.setMaximumSize(new Dimension(600, Integer.MAX_VALUE));
+        formCard.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        TextField titleField = new TextField();
-        titleField.setPromptText("Job Title (e.g. Senior Java Developer)");
-        titleField.setMaxWidth(Double.MAX_VALUE);
-        titleField.setPrefHeight(45);
+        JLabel lblTitle = new JLabel("Title Details");
+        lblTitle.setFont(new Font("Segoe UI", Font.BOLD, 15));
+        lblTitle.setForeground(new Color(33, 37, 41));
+        lblTitle.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        TextField companyField = new TextField();
-        companyField.setPromptText("Company Name");
-        companyField.setMaxWidth(Double.MAX_VALUE);
-        companyField.setPrefHeight(45);
+        JTextField titleField = new JTextField();
+        titleField.setMaximumSize(new Dimension(Integer.MAX_VALUE, 45));
+        titleField.setPreferredSize(new Dimension(550, 45));
+        titleField.setFont(new Font("Segoe UI", Font.PLAIN, 15));
+        titleField.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(SystemColors.BORDER, 1),
+            BorderFactory.createEmptyBorder(10, 15, 10, 15)
+        ));
+        titleField.setBackground(SystemColors.BACKGROUND);
+        titleField.setForeground(new Color(33, 37, 41));
+        titleField.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        TextArea descArea = new TextArea();
-        descArea.setPromptText("Job Description (Overview, Role Responsibilities)");
-        descArea.setMaxWidth(Double.MAX_VALUE);
-        descArea.setPrefRowCount(4);
-        descArea.setStyle("-fx-background-color: #1f2335; -fx-text-fill: -text-dark; -fx-border-color: rgba(255,255,255,0.1); -fx-border-radius: 8; -fx-control-inner-background: #1f2335;");
+        JTextField companyField = new JTextField();
+        companyField.setMaximumSize(new Dimension(Integer.MAX_VALUE, 45));
+        companyField.setPreferredSize(new Dimension(550, 45));
+        companyField.setFont(new Font("Segoe UI", Font.PLAIN, 15));
+        companyField.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(SystemColors.BORDER, 1),
+            BorderFactory.createEmptyBorder(10, 15, 10, 15)
+        ));
+        companyField.setBackground(SystemColors.BACKGROUND);
+        companyField.setForeground(new Color(33, 37, 41));
+        companyField.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        HBox reqHeader = new HBox();
-        reqHeader.setAlignment(Pos.CENTER_LEFT);
+        JLabel lblDesc = new JLabel("Job Description");
+        lblDesc.setFont(new Font("Segoe UI", Font.BOLD, 15));
+        lblDesc.setForeground(new Color(33, 37, 41));
+        lblDesc.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        JTextArea descArea = new JTextArea(4, 50);
+        descArea.setWrapStyleWord(true);
+        descArea.setLineWrap(true);
+        descArea.setFont(new Font("Segoe UI", Font.PLAIN, 15));
+        descArea.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(SystemColors.BORDER, 1),
+            BorderFactory.createEmptyBorder(10, 15, 10, 15)
+        ));
+        descArea.setBackground(SystemColors.BACKGROUND);
+        descArea.setForeground(new Color(33, 37, 41));
+        JScrollPane descScrollPane = new JScrollPane(descArea);
+        descScrollPane.setMaximumSize(new Dimension(Integer.MAX_VALUE, 120));
+        descScrollPane.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        JPanel reqHeader = new JPanel(new BorderLayout());
+        reqHeader.setBackground(SystemColors.SURFACE);
+        reqHeader.setMaximumSize(new Dimension(Integer.MAX_VALUE, 30));
+        reqHeader.setAlignmentX(Component.LEFT_ALIGNMENT);
         
-        Label lblReq = new Label("Requirements");
-        lblReq.setStyle("-fx-text-fill: -text-muted; -fx-font-weight: bold;");
-        
-        Region spacer = new Region();
-        HBox.setHgrow(spacer, Priority.ALWAYS);
+        JLabel lblReq = new JLabel("Requirements");
+        lblReq.setFont(new Font("Segoe UI", Font.BOLD, 15));
+        lblReq.setForeground(new Color(33, 37, 41));
 
-        Button aiGenBtn = new Button("✨ Auto-Generate with AI");
-        aiGenBtn.getStyleClass().add("btn-primary");
-        aiGenBtn.setStyle("-fx-font-size: 12px; -fx-padding: 5 10 5 10;");
+        JButton aiGenBtn = new JButton("✨ Auto-Generate with AI");
+        aiGenBtn.setBackground(SystemColors.PRIMARY);
+        aiGenBtn.setForeground(Color.BLACK);
+        aiGenBtn.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
+        aiGenBtn.setFocusPainted(false);
+        aiGenBtn.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        aiGenBtn.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 12));
 
-        reqHeader.getChildren().addAll(lblReq, spacer, aiGenBtn);
+        reqHeader.add(lblReq, BorderLayout.WEST);
+        reqHeader.add(aiGenBtn, BorderLayout.EAST);
 
-        TextArea reqArea = new TextArea();
-        reqArea.setPromptText("Requirements (e.g. 5+ years experience...)");
-        reqArea.setMaxWidth(Double.MAX_VALUE);
-        reqArea.setPrefRowCount(4);
-        reqArea.setStyle("-fx-background-color: #1f2335; -fx-text-fill: -text-dark; -fx-border-color: rgba(255,255,255,0.1); -fx-border-radius: 8; -fx-control-inner-background: #1f2335;");
+        JTextArea reqArea = new JTextArea(4, 50);
+        reqArea.setWrapStyleWord(true);
+        reqArea.setLineWrap(true);
+        reqArea.setFont(new Font("Segoe UI", Font.PLAIN, 15));
+        reqArea.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(SystemColors.BORDER, 1),
+            BorderFactory.createEmptyBorder(10, 15, 10, 15)
+        ));
+        reqArea.setBackground(SystemColors.BACKGROUND);
+        reqArea.setForeground(new Color(33, 37, 41));
+        JScrollPane reqScrollPane = new JScrollPane(reqArea);
+        reqScrollPane.setMaximumSize(new Dimension(Integer.MAX_VALUE, 120));
+        reqScrollPane.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        aiGenBtn.setOnAction(e -> {
+        aiGenBtn.addActionListener(e -> {
             String combinedData = (titleField.getText() + " " + descArea.getText()).toLowerCase();
             StringBuilder genReq = new StringBuilder("Auto-Generated Requirements:\n");
             
@@ -99,15 +147,21 @@ public class PostJobUI {
             reqArea.setText(genReq.toString());
         });
 
-        Label statusLabel = new Label();
-        statusLabel.setStyle("-fx-font-weight: bold;");
+        JLabel statusLabel = new JLabel();
+        statusLabel.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 12));
+        statusLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        Button postBtn = new Button("Post Job Listing");
-        postBtn.getStyleClass().add("btn-accent");
-        postBtn.setMaxWidth(Double.MAX_VALUE);
-        postBtn.setPrefHeight(45);
+        JButton postBtn = new JButton("Post Job Listing");
+        postBtn.setMaximumSize(new Dimension(Integer.MAX_VALUE, 45));
+        postBtn.setPreferredSize(new Dimension(550, 45));
+        postBtn.setBackground(SystemColors.PRIMARY);
+        postBtn.setForeground(Color.BLACK);
+        postBtn.setBorder(BorderFactory.createEmptyBorder(12, 20, 12, 20));
+        postBtn.setFocusPainted(false);
+        postBtn.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        postBtn.setAlignmentX(Component.LEFT_ALIGNMENT);
         
-        postBtn.setOnAction(e -> {
+        postBtn.addActionListener(e -> {
             String title = titleField.getText();
             String comp = companyField.getText();
             String desc = descArea.getText();
@@ -115,34 +169,77 @@ public class PostJobUI {
 
             if(title.isEmpty() || comp.isEmpty()) {
                 statusLabel.setText("Title and Company are required.");
-                statusLabel.setStyle("-fx-text-fill: -error-color; -fx-font-weight: bold;");
+                statusLabel.setForeground(Color.RED);
                 return;
             }
 
             if (jobController.createJob(currentUser.getId(), title, comp, desc, req)) {
                 statusLabel.setText("Job posted successfully!");
-                statusLabel.setStyle("-fx-text-fill: -success-color; -fx-font-weight: bold;");
-                titleField.clear();
-                companyField.clear();
-                descArea.clear();
-                reqArea.clear();
+                statusLabel.setForeground(new Color(34, 139, 34));
+                titleField.setText("");
+                companyField.setText("");
+                descArea.setText("");
+                reqArea.setText("");
             } else {
                 statusLabel.setText("Failed to post job.");
-                statusLabel.setStyle("-fx-text-fill: -error-color; -fx-font-weight: bold;");
+                statusLabel.setForeground(Color.RED);
             }
         });
 
-        Label lblTitle = new Label("Title Details");
-        lblTitle.setStyle("-fx-text-fill: -text-muted; -fx-font-weight: bold;");
-        Label lblDesc = new Label("Job Description");
-        lblDesc.setStyle("-fx-text-fill: -text-muted; -fx-font-weight: bold;");
+        // Add placeholder labels
+        JLabel titlePlaceholder = new JLabel("Job Title (e.g. Senior Java Developer)");
+        titlePlaceholder.setForeground(new Color(108, 117, 125));
+        titlePlaceholder.setFont(new Font("Segoe UI", Font.ITALIC, 13));
+        titlePlaceholder.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        formCard.getChildren().addAll(lblTitle, titleField, companyField, lblDesc, descArea, reqHeader, reqArea, statusLabel, postBtn);
+        JLabel companyPlaceholder = new JLabel("Company Name");
+        companyPlaceholder.setForeground(new Color(108, 117, 125));
+        companyPlaceholder.setFont(new Font("Segoe UI", Font.ITALIC, 13));
+        companyPlaceholder.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        JLabel descPlaceholder = new JLabel("Job Description (Overview, Role Responsibilities)");
+        descPlaceholder.setForeground(new Color(108, 117, 125));
+        descPlaceholder.setFont(new Font("Segoe UI", Font.ITALIC, 13));
+        descPlaceholder.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        JLabel reqPlaceholder = new JLabel("Requirements (e.g. 5+ years experience...)");
+        reqPlaceholder.setForeground(new Color(108, 117, 125));
+        reqPlaceholder.setFont(new Font("Segoe UI", Font.ITALIC, 13));
+        reqPlaceholder.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        formCard.add(lblTitle);
+        formCard.add(Box.createVerticalStrut(5));
+        formCard.add(titlePlaceholder);
+        formCard.add(Box.createVerticalStrut(3));
+        formCard.add(titleField);
+        formCard.add(Box.createVerticalStrut(15));
+        formCard.add(companyPlaceholder);
+        formCard.add(Box.createVerticalStrut(3));
+        formCard.add(companyField);
+        formCard.add(Box.createVerticalStrut(15));
+        formCard.add(lblDesc);
+        formCard.add(Box.createVerticalStrut(5));
+        formCard.add(descPlaceholder);
+        formCard.add(Box.createVerticalStrut(3));
+        formCard.add(descScrollPane);
+        formCard.add(Box.createVerticalStrut(15));
+        formCard.add(reqHeader);
+        formCard.add(Box.createVerticalStrut(5));
+        formCard.add(reqPlaceholder);
+        formCard.add(Box.createVerticalStrut(3));
+        formCard.add(reqScrollPane);
+        formCard.add(Box.createVerticalStrut(15));
+        formCard.add(statusLabel);
+        formCard.add(Box.createVerticalStrut(15));
+        formCard.add(postBtn);
         
-        view.getChildren().addAll(sectionTitle, formCard);
+        view.add(sectionTitle);
+        view.add(Box.createVerticalStrut(20));
+        view.add(formCard);
+        view.add(Box.createVerticalGlue());
     }
 
-    public VBox getView() {
+    public JPanel getView() {
         return view;
     }
 }

@@ -2,77 +2,109 @@ package com.mesi.jobai.ui;
 
 import com.mesi.jobai.controller.AuthController;
 import com.mesi.jobai.model.User;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.scene.Scene;
-import javafx.scene.control.*;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class RegisterUI {
-    private BorderPane view;
-    private Stage stage;
+    private JPanel view;
+    private JFrame parentFrame;
     private AuthController authController;
 
-    public RegisterUI(Stage stage) {
-        this.stage = stage;
+    public RegisterUI(JFrame parentFrame) {
+        this.parentFrame = parentFrame;
         this.authController = new AuthController();
-        view = new BorderPane();
-        view.getStyleClass().add("root");
+        view = new JPanel(new BorderLayout());
+        view.setBackground(SystemColors.BACKGROUND);
 
-        VBox formBox = new VBox(20);
-        formBox.setAlignment(Pos.CENTER);
-        formBox.setPadding(new Insets(40, 40, 40, 40));
-        formBox.setMaxWidth(450);
-        formBox.setMaxHeight(550);
-        formBox.getStyleClass().add("card");
+        JPanel formPanel = new JPanel();
+        formPanel.setLayout(new BoxLayout(formPanel, BoxLayout.Y_AXIS));
+        formPanel.setBackground(SystemColors.SURFACE);
+        formPanel.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createEmptyBorder(40, 40, 40, 40),
+            BorderFactory.createEmptyBorder(20, 20, 20, 20)
+        ));
 
-        Label title = new Label("Join AI Job Network");
-        title.setStyle("-fx-font-size: 26px; -fx-font-weight: 800; -fx-text-fill: -text-light;");
+        JLabel title = new JLabel("Join AI Job Network");
+        title.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 26));
+        title.setForeground(SystemColors.TEXT_PRIMARY);
+        title.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        Label subtitle = new Label("Create a new account");
-        subtitle.setStyle("-fx-font-size: 15px; -fx-text-fill: -text-muted;");
+        JLabel subtitle = new JLabel("Create a new account");
+        subtitle.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 15));
+        subtitle.setForeground(SystemColors.TEXT_SECONDARY);
+        subtitle.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        TextField nameField = new TextField();
-        nameField.setPromptText("Full Name");
-        nameField.setMaxWidth(Double.MAX_VALUE);
-        nameField.setPrefHeight(45);
+        JTextField nameField = new JTextField();
+        nameField.setMaximumSize(new Dimension(350, 45));
+        nameField.setPreferredSize(new Dimension(350, 45));
+        nameField.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(SystemColors.BORDER, 1),
+            BorderFactory.createEmptyBorder(10, 15, 10, 15)
+        ));
+        nameField.setBackground(SystemColors.BACKGROUND);
+        nameField.setForeground(SystemColors.TEXT_PRIMARY);
 
-        TextField emailField = new TextField();
-        emailField.setPromptText("Email Address");
-        emailField.setMaxWidth(Double.MAX_VALUE);
-        emailField.setPrefHeight(45);
+        JTextField emailField = new JTextField();
+        emailField.setMaximumSize(new Dimension(350, 45));
+        emailField.setPreferredSize(new Dimension(350, 45));
+        emailField.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(SystemColors.BORDER, 1),
+            BorderFactory.createEmptyBorder(10, 15, 10, 15)
+        ));
+        emailField.setBackground(SystemColors.BACKGROUND);
+        emailField.setForeground(SystemColors.TEXT_PRIMARY);
 
-        PasswordField passwordField = new PasswordField();
-        passwordField.setPromptText("Password");
-        passwordField.setMaxWidth(Double.MAX_VALUE);
-        passwordField.setPrefHeight(45);
+        JPasswordField passwordField = new JPasswordField();
+        passwordField.setMaximumSize(new Dimension(350, 45));
+        passwordField.setPreferredSize(new Dimension(350, 45));
+        passwordField.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(SystemColors.BORDER, 1),
+            BorderFactory.createEmptyBorder(10, 15, 10, 15)
+        ));
+        passwordField.setBackground(SystemColors.BACKGROUND);
+        passwordField.setForeground(SystemColors.TEXT_PRIMARY);
 
-        ComboBox<String> roleBox = new ComboBox<>();
-        roleBox.getItems().addAll("APPLICANT", "EMPLOYER");
-        roleBox.setValue("APPLICANT");
-        roleBox.setMaxWidth(Double.MAX_VALUE);
-        roleBox.setPrefHeight(45);
+        JComboBox<String> roleBox = new JComboBox<>(new String[]{"APPLICANT", "EMPLOYER"});
+        roleBox.setSelectedItem("APPLICANT");
+        roleBox.setMaximumSize(new Dimension(350, 45));
+        roleBox.setPreferredSize(new Dimension(350, 45));
+        roleBox.setBackground(SystemColors.BACKGROUND);
+        roleBox.setForeground(SystemColors.TEXT_PRIMARY);
 
-        Label errorLabel = new Label();
-        errorLabel.setStyle("-fx-text-fill: -error-color; -fx-font-weight: bold;");
-        Label successLabel = new Label();
-        successLabel.setStyle("-fx-text-fill: -success-color; -fx-font-weight: bold;");
+        JLabel errorLabel = new JLabel();
+        errorLabel.setForeground(Color.RED);
+        errorLabel.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 12));
+        errorLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        
+        JLabel successLabel = new JLabel();
+        successLabel.setForeground(new Color(34, 139, 34));
+        successLabel.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 12));
+        successLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        Button registerBtn = new Button("Register Account");
-        registerBtn.getStyleClass().add("btn-accent");
-        registerBtn.setMaxWidth(Double.MAX_VALUE);
-        registerBtn.setPrefHeight(45);
+        JButton registerBtn = new JButton("Register Account");
+        registerBtn.setMaximumSize(new Dimension(350, 45));
+        registerBtn.setPreferredSize(new Dimension(350, 45));
+        registerBtn.setBackground(SystemColors.PRIMARY);
+        registerBtn.setForeground(Color.BLACK);
+        registerBtn.setBorder(BorderFactory.createEmptyBorder(12, 20, 12, 20));
+        registerBtn.setFocusPainted(false);
+        registerBtn.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
-        Button loginLink = new Button("Already have an account? Sign in");
-        loginLink.setStyle("-fx-background-color: transparent; -fx-text-fill: -accent-color; -fx-cursor: hand; -fx-font-weight: bold;");
+        JButton loginLink = new JButton("Already have an account? Sign in");
+        loginLink.setBackground(new Color(0, 0, 0, 0));
+        loginLink.setForeground(SystemColors.PRIMARY);
+        loginLink.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        loginLink.setFocusPainted(false);
+        loginLink.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        loginLink.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        registerBtn.setOnAction(e -> {
+        registerBtn.addActionListener(e -> {
             String name = nameField.getText();
             String email = emailField.getText();
-            String password = passwordField.getText();
-            String role = roleBox.getValue();
+            String password = new String(passwordField.getPassword());
+            String role = (String) roleBox.getSelectedItem();
 
             if (name.isEmpty() || email.isEmpty() || password.isEmpty()) {
                 errorLabel.setText("Please fill all fields.");
@@ -85,29 +117,74 @@ public class RegisterUI {
             if (success) {
                 successLabel.setText("Registration successful! You can now sign in.");
                 errorLabel.setText("");
-                nameField.clear();
-                emailField.clear();
-                passwordField.clear();
+                nameField.setText("");
+                emailField.setText("");
+                passwordField.setText("");
             } else {
                 errorLabel.setText("Registration failed. Email might already exist.");
                 successLabel.setText("");
             }
         });
 
-        loginLink.setOnAction(e -> {
-            LoginUI loginUI = new LoginUI(stage);
-            Scene loginScene = new Scene(loginUI.getView(), 1050, 700);
-            try {
-                loginScene.getStylesheets().add(getClass().getResource("/styles/style.css").toExternalForm());
-            } catch (Exception ex) {}
-            stage.setScene(loginScene);
+        loginLink.addActionListener(e -> {
+            parentFrame.dispose();
+            SwingUtilities.invokeLater(() -> {
+                new UnifiedLoginUI().setVisible(true);
+            });
         });
 
-        formBox.getChildren().addAll(title, subtitle, nameField, emailField, passwordField, roleBox, errorLabel, successLabel, registerBtn, loginLink);
-        view.setCenter(formBox);
+        // Add placeholder labels
+        JLabel namePlaceholder = new JLabel("Full Name");
+        namePlaceholder.setForeground(SystemColors.TEXT_SECONDARY);
+        namePlaceholder.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 12));
+        namePlaceholder.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        JLabel emailPlaceholder = new JLabel("Email Address");
+        emailPlaceholder.setForeground(SystemColors.TEXT_SECONDARY);
+        emailPlaceholder.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 12));
+        emailPlaceholder.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        JLabel passwordPlaceholder = new JLabel("Password");
+        passwordPlaceholder.setForeground(SystemColors.TEXT_SECONDARY);
+        passwordPlaceholder.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 12));
+        passwordPlaceholder.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        formPanel.add(Box.createVerticalStrut(20));
+        formPanel.add(title);
+        formPanel.add(Box.createVerticalStrut(10));
+        formPanel.add(subtitle);
+        formPanel.add(Box.createVerticalStrut(30));
+        formPanel.add(namePlaceholder);
+        formPanel.add(Box.createVerticalStrut(5));
+        formPanel.add(nameField);
+        formPanel.add(Box.createVerticalStrut(15));
+        formPanel.add(emailPlaceholder);
+        formPanel.add(Box.createVerticalStrut(5));
+        formPanel.add(emailField);
+        formPanel.add(Box.createVerticalStrut(15));
+        formPanel.add(passwordPlaceholder);
+        formPanel.add(Box.createVerticalStrut(5));
+        formPanel.add(passwordField);
+        formPanel.add(Box.createVerticalStrut(15));
+        formPanel.add(roleBox);
+        formPanel.add(Box.createVerticalStrut(15));
+        formPanel.add(errorLabel);
+        formPanel.add(successLabel);
+        formPanel.add(Box.createVerticalStrut(15));
+        formPanel.add(registerBtn);
+        formPanel.add(Box.createVerticalStrut(15));
+        formPanel.add(loginLink);
+        formPanel.add(Box.createVerticalStrut(20));
+
+        // Center the form panel
+        JPanel centerPanel = new JPanel(new GridBagLayout());
+        centerPanel.setBackground(SystemColors.BACKGROUND);
+        centerPanel.add(formPanel);
+
+        view.add(centerPanel, BorderLayout.CENTER);
     }
 
-    public BorderPane getView() {
+    public JPanel getView() {
         return view;
     }
 }

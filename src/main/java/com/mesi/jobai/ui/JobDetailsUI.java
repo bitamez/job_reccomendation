@@ -3,86 +3,190 @@ package com.mesi.jobai.ui;
 import com.mesi.jobai.controller.ApplicationController;
 import com.mesi.jobai.model.Job;
 import com.mesi.jobai.model.User;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javax.swing.*;
+import java.awt.*;
 
 public class JobDetailsUI {
-    private VBox view;
+    private JPanel view;
     private ApplicationController applicationController;
 
     public JobDetailsUI(DashboardUI dashboard, Job job, String matchScore, User currentUser) {
         this.applicationController = new ApplicationController();
-        view = new VBox(25);
-        view.getStyleClass().add("content-area");
-        view.setAlignment(Pos.TOP_LEFT);
+        view = new JPanel();
+        view.setLayout(new BoxLayout(view, BoxLayout.Y_AXIS));
+        view.setBackground(SystemColors.BACKGROUND);
+        view.setBorder(BorderFactory.createEmptyBorder(25, 25, 25, 25));
 
-        Label sectionTitle = new Label("Job Details");
-        sectionTitle.setStyle("-fx-font-size: 28px; -fx-font-weight: 800; -fx-text-fill: -text-light;");
+        JLabel sectionTitle = new JLabel("Job Details");
+        sectionTitle.setFont(new Font("Segoe UI", Font.BOLD, 28));
+        sectionTitle.setForeground(new Color(33, 37, 41));
+        sectionTitle.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        VBox cardBox = new VBox(15);
-        cardBox.getStyleClass().add("card");
-        cardBox.setPadding(new Insets(35));
-        cardBox.setMaxWidth(800);
+        JPanel cardPanel = new JPanel();
+        cardPanel.setLayout(new BoxLayout(cardPanel, BoxLayout.Y_AXIS));
+        cardPanel.setBackground(SystemColors.SURFACE);
+        cardPanel.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(SystemColors.BORDER, 1),
+            BorderFactory.createEmptyBorder(35, 35, 35, 35)
+        ));
+        cardPanel.setMaximumSize(new Dimension(800, Integer.MAX_VALUE));
+        cardPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        Label jobTitle = new Label(job.getTitle() + " @ " + job.getCompany());
-        jobTitle.setStyle("-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: -text-light;");
+        JLabel jobTitle = new JLabel(job.getTitle() + " @ " + job.getCompany());
+        jobTitle.setFont(new Font("Segoe UI", Font.BOLD, 22));
+        jobTitle.setForeground(new Color(33, 37, 41));
+        jobTitle.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        Label scoreLabel = new Label("AI Match Score: " + matchScore);
-        scoreLabel.getStyleClass().add("match-score");
-        scoreLabel.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-padding: 0 0 15 0;");
+        JLabel scoreLabel = new JLabel("AI Match Score: " + matchScore);
+        scoreLabel.setFont(new Font("Segoe UI", Font.BOLD, 16));
+        scoreLabel.setForeground(new Color(0, 120, 215));
+        scoreLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        Label descTitle = new Label("Job Description");
-        descTitle.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: -text-muted; -fx-padding: 10 0 5 0;");
+        JLabel descTitle = new JLabel("Job Description");
+        descTitle.setFont(new Font("Segoe UI", Font.BOLD, 16));
+        descTitle.setForeground(new Color(73, 80, 87));
+        descTitle.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        Label description = new Label(job.getDescription());
-        description.setWrapText(true);
-        description.setStyle("-fx-text-fill: -text-dark; -fx-font-size: 14px; -fx-line-spacing: 5px;");
+        JTextArea description = new JTextArea(job.getDescription());
+        description.setWrapStyleWord(true);
+        description.setLineWrap(true);
+        description.setEditable(false);
+        description.setOpaque(false);
+        description.setForeground(new Color(33, 37, 41));
+        description.setFont(new Font("Segoe UI", Font.PLAIN, 15));
+        description.setBorder(BorderFactory.createEmptyBorder(5, 0, 0, 0));
 
-        Label reqTitle = new Label("Requirements");
-        reqTitle.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: -text-muted; -fx-padding: 15 0 5 0;");
+        JLabel reqTitle = new JLabel("Requirements");
+        reqTitle.setFont(new Font("Segoe UI", Font.BOLD, 16));
+        reqTitle.setForeground(new Color(73, 80, 87));
+        reqTitle.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        Label reqDesc = new Label(job.getRequirements());
-        reqDesc.setWrapText(true);
-        reqDesc.setStyle("-fx-text-fill: -text-dark; -fx-font-size: 14px; -fx-line-spacing: 5px;");
+        JTextArea reqDesc = new JTextArea(job.getRequirements());
+        reqDesc.setWrapStyleWord(true);
+        reqDesc.setLineWrap(true);
+        reqDesc.setEditable(false);
+        reqDesc.setOpaque(false);
+        reqDesc.setForeground(new Color(33, 37, 41));
+        reqDesc.setFont(new Font("Segoe UI", Font.PLAIN, 15));
+        reqDesc.setBorder(BorderFactory.createEmptyBorder(5, 0, 0, 0));
 
-        HBox buttonBox = new HBox(15);
-        buttonBox.setAlignment(Pos.CENTER_LEFT);
-        buttonBox.setPadding(new Insets(20, 0, 0, 0));
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 15, 0));
+        buttonPanel.setBackground(SystemColors.SURFACE);
+        buttonPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        Label statusLabel = new Label();
-        statusLabel.setStyle("-fx-font-size: 15px; -fx-font-weight: bold;");
+        JLabel statusLabel = new JLabel();
+        statusLabel.setFont(new Font("Segoe UI", Font.BOLD, 15));
 
-        Button btnApply = new Button("Apply Now");
-        btnApply.getStyleClass().add("btn-accent");
-        btnApply.setPrefHeight(40);
+        JButton btnApply = new JButton("Apply Now");
+        btnApply.setPreferredSize(new Dimension(160, 50));
+        btnApply.setBackground(new Color(0, 120, 215));  // Explicit blue color
+        btnApply.setForeground(Color.BLACK);
+        btnApply.setFont(new Font("Segoe UI", Font.BOLD, 16));
+        btnApply.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(new Color(0, 120, 215), 2),
+            BorderFactory.createEmptyBorder(10, 20, 10, 20)
+        ));
+        btnApply.setFocusPainted(false);
+        btnApply.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        btnApply.setOpaque(true);
         
-        btnApply.setOnAction(e -> {
+        // Add hover effect
+        btnApply.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                if (btnApply.isEnabled()) {
+                    btnApply.setBackground(new Color(0, 100, 195));  // Darker blue on hover
+                }
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                if (btnApply.isEnabled()) {
+                    btnApply.setBackground(new Color(0, 120, 215));  // Original blue
+                }
+            }
+        });
+        
+        btnApply.addActionListener(e -> {
             if (applicationController.applyForJob(job.getId(), currentUser.getId())) {
+                // Show success alert dialog
+                JOptionPane.showMessageDialog(
+                    view,
+                    "Your application has been submitted successfully!\n\n" +
+                    "Job: " + job.getTitle() + "\n" +
+                    "Company: " + job.getCompany() + "\n\n" +
+                    "The employer will review your application soon.",
+                    "Application Successful",
+                    JOptionPane.INFORMATION_MESSAGE
+                );
+                
                 statusLabel.setText("Successfully Applied!");
-                statusLabel.setStyle("-fx-text-fill: -success-color;");
-                btnApply.setDisable(true);
+                statusLabel.setForeground(new Color(16, 124, 16));
+                btnApply.setEnabled(false);
+                btnApply.setBackground(new Color(180, 180, 180));  // Gray when disabled
             } else {
+                // Show error alert dialog
+                JOptionPane.showMessageDialog(
+                    view,
+                    "Unable to submit your application.\n\n" +
+                    "You may have already applied for this position.\n" +
+                    "Please check your applications page.",
+                    "Application Failed",
+                    JOptionPane.ERROR_MESSAGE
+                );
+                
                 statusLabel.setText("Failed to apply. You may have already applied.");
-                statusLabel.setStyle("-fx-text-fill: -error-color;");
+                statusLabel.setForeground(new Color(196, 43, 28));
             }
         });
 
-        Button btnBack = new Button("← Back to Jobs");
-        btnBack.getStyleClass().add("btn-primary");
-        btnBack.setPrefHeight(40);
-        btnBack.setOnAction(e -> dashboard.showJobList());
+        JButton btnBack = new JButton("← Back to Jobs");
+        btnBack.setPreferredSize(new Dimension(160, 50));
+        btnBack.setBackground(Color.WHITE);
+        btnBack.setForeground(Color.BLACK);
+        btnBack.setFont(new Font("Segoe UI", Font.BOLD, 16));
+        btnBack.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(new Color(0, 120, 215), 2),
+            BorderFactory.createEmptyBorder(10, 20, 10, 20)
+        ));
+        btnBack.setFocusPainted(false);
+        btnBack.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        btnBack.setOpaque(true);
+        
+        // Add hover effect
+        btnBack.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                btnBack.setBackground(new Color(240, 248, 255));  // Light blue on hover
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                btnBack.setBackground(Color.WHITE);  // White background
+            }
+        });
+        
+        btnBack.addActionListener(e -> dashboard.showJobList());
 
-        buttonBox.getChildren().addAll(btnBack, btnApply, statusLabel);
+        buttonPanel.add(btnBack);
+        buttonPanel.add(btnApply);
+        buttonPanel.add(statusLabel);
 
-        cardBox.getChildren().addAll(jobTitle, scoreLabel, descTitle, description, reqTitle, reqDesc, buttonBox);
-        view.getChildren().addAll(sectionTitle, cardBox);
+        cardPanel.add(jobTitle);
+        cardPanel.add(Box.createVerticalStrut(15));
+        cardPanel.add(scoreLabel);
+        cardPanel.add(Box.createVerticalStrut(15));
+        cardPanel.add(descTitle);
+        cardPanel.add(Box.createVerticalStrut(5));
+        cardPanel.add(description);
+        cardPanel.add(Box.createVerticalStrut(15));
+        cardPanel.add(reqTitle);
+        cardPanel.add(Box.createVerticalStrut(5));
+        cardPanel.add(reqDesc);
+        cardPanel.add(Box.createVerticalStrut(20));
+        cardPanel.add(buttonPanel);
+
+        view.add(sectionTitle);
+        view.add(Box.createVerticalStrut(25));
+        view.add(cardPanel);
+        view.add(Box.createVerticalGlue());
     }
 
-    public VBox getView() {
+    public JPanel getView() {
         return view;
     }
 }

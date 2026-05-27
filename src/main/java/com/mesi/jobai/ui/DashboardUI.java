@@ -1,16 +1,15 @@
 package com.mesi.jobai.ui;
 
-import javafx.geometry.Pos;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.layout.*;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import com.mesi.jobai.model.User;
-import javafx.stage.Stage;
 
 public class DashboardUI {
-    private BorderPane mainLayout;
-    private VBox sidebar;
-    private HBox header;
+    private JPanel mainLayout;
+    private JPanel sidebar;
+    private JPanel header;
 
     private JobListUI jobList;
     private ApplicationsUI applications;
@@ -20,13 +19,13 @@ public class DashboardUI {
     private EmployerApplicationsUI employerApplicationsUI;
     private EmployerAnalyticsUI employerAnalyticsUI;
     private User currentUser;
-    private Stage stage;
+    private JFrame parentFrame;
 
-    public DashboardUI(User user, Stage stage) {
+    public DashboardUI(User user, JFrame parentFrame) {
         this.currentUser = user;
-        this.stage = stage;
-        mainLayout = new BorderPane();
-        mainLayout.getStyleClass().add("root");
+        this.parentFrame = parentFrame;
+        mainLayout = new JPanel(new BorderLayout());
+        mainLayout.setBackground(SystemColors.BACKGROUND);
 
         createHeader();
         createSidebar();
@@ -39,131 +38,202 @@ public class DashboardUI {
         this.employerApplicationsUI = new EmployerApplicationsUI(currentUser);
         this.employerAnalyticsUI = new EmployerAnalyticsUI(currentUser);
 
-        mainLayout.setTop(header);
-        mainLayout.setLeft(sidebar);
+        mainLayout.add(header, BorderLayout.NORTH);
+        mainLayout.add(sidebar, BorderLayout.WEST);
         
         // Initial center view logic based on role
         if (currentUser.getRole().equals("EMPLOYER")) {
-            mainLayout.setCenter(employerAnalyticsUI.getView());
+            mainLayout.add(employerAnalyticsUI.getView(), BorderLayout.CENTER);
         } else {
-            mainLayout.setCenter(jobList.getView());
+            mainLayout.add(jobList.getView(), BorderLayout.CENTER);
         }
     }
 
     private void createHeader() {
-        header = new HBox();
-        header.getStyleClass().add("top-header");
-        header.setAlignment(Pos.CENTER_LEFT);
+        header = new JPanel(new BorderLayout());
+        header.setBackground(SystemColors.PRIMARY);
+        header.setBorder(BorderFactory.createEmptyBorder(15, 20, 15, 20));
+        header.setPreferredSize(new Dimension(0, 70));
 
-        Label titleLabel = new Label("AI Job Recommendation System");
-        titleLabel.getStyleClass().add("header-title");
-        
-        Region spacer = new Region();
-        HBox.setHgrow(spacer, Priority.ALWAYS);
+        JLabel titleLabel = new JLabel("AI Job Recommendation System");
+        titleLabel.setForeground(Color.WHITE);
+        titleLabel.setFont(new Font("Segoe UI", Font.BOLD, 22));
 
-        Label userIcon = new Label("👤 " + currentUser.getName() + " (" + currentUser.getRole() + ")");
-        userIcon.setStyle("-fx-text-fill: white; -fx-font-weight: bold;");
+        JPanel rightPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 15, 0));
+        rightPanel.setOpaque(false);
 
-        Button logoutBtn = new Button("Logout");
-        logoutBtn.setStyle("-fx-background-color: transparent; -fx-text-fill: #ff6b6b; -fx-cursor: hand;");
-        logoutBtn.setOnAction(e -> {
-            LoginUI loginUI = new LoginUI(stage);
-            javafx.scene.Scene scene = new javafx.scene.Scene(loginUI.getView(), 1000, 650);
-            try {
-                scene.getStylesheets().add(getClass().getResource("/styles/style.css").toExternalForm());
-            } catch (Exception ex) {}
-            stage.setScene(scene);
+        JLabel userIcon = new JLabel("👤 " + currentUser.getName() + " (" + currentUser.getRole() + ")");
+        userIcon.setForeground(Color.WHITE);
+        userIcon.setFont(new Font("Segoe UI", Font.BOLD, 15));
+
+        JButton logoutBtn = new JButton("Logout");
+        logoutBtn.setBackground(new Color(0, 0, 0, 0));
+        logoutBtn.setForeground(Color.BLACK);
+        logoutBtn.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        logoutBtn.setBorder(BorderFactory.createEmptyBorder(8, 15, 8, 15));
+        logoutBtn.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        logoutBtn.addActionListener(e -> {
+            parentFrame.dispose();
+            SwingUtilities.invokeLater(() -> {
+                new UnifiedLoginUI().setVisible(true);
+            });
         });
 
-        header.getChildren().addAll(titleLabel, spacer, userIcon, logoutBtn);
+        rightPanel.add(userIcon);
+        rightPanel.add(logoutBtn);
+
+        header.add(titleLabel, BorderLayout.WEST);
+        header.add(rightPanel, BorderLayout.EAST);
     }
 
     private void createSidebar() {
-        sidebar = new VBox(10);
-        sidebar.getStyleClass().add("sidebar");
-        sidebar.setPrefWidth(200);
+        sidebar = new JPanel();
+        sidebar.setLayout(new BoxLayout(sidebar, BoxLayout.Y_AXIS));
+        sidebar.setBackground(SystemColors.SURFACE);
+        sidebar.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        sidebar.setPreferredSize(new Dimension(200, 0));
 
-        Button btnDashboard = new Button("Dashboard");
-        btnDashboard.getStyleClass().addAll("sidebar-btn", "active");
-        btnDashboard.setMaxWidth(Double.MAX_VALUE);
+        JButton btnDashboard = createSidebarButton("Dashboard", true);
+        JButton btnApplications = createSidebarButton(currentUser.getRole().equals("EMPLOYER") ? "Post a Job" : "My Applications", false);
+        JButton btnSkills = createSidebarButton("My Skills", false);
+        JButton btnProfile = createSidebarButton("My Profile", false);
+        JButton btnViewApplicants = createSidebarButton("Review Applicants", false);
 
-        Button btnApplications = new Button(currentUser.getRole().equals("EMPLOYER") ? "Post a Job" : "My Applications");
-        btnApplications.getStyleClass().add("sidebar-btn");
-        btnApplications.setMaxWidth(Double.MAX_VALUE);
-
-        Button btnSkills = new Button("My Skills");
-        btnSkills.getStyleClass().add("sidebar-btn");
-        btnSkills.setMaxWidth(Double.MAX_VALUE);
-
-        Button btnProfile = new Button("My Profile");
-        btnProfile.getStyleClass().add("sidebar-btn");
-        btnProfile.setMaxWidth(Double.MAX_VALUE);
-
-        Button btnViewApplicants = new Button("Review Applicants");
-        btnViewApplicants.getStyleClass().add("sidebar-btn");
-        btnViewApplicants.setMaxWidth(Double.MAX_VALUE);
-
-        btnDashboard.setOnAction(e -> {
+        btnDashboard.addActionListener(e -> {
+             mainLayout.removeAll();
+             mainLayout.add(header, BorderLayout.NORTH);
+             mainLayout.add(sidebar, BorderLayout.WEST);
              if (currentUser.getRole().equals("EMPLOYER")) {
-                 mainLayout.setCenter(employerAnalyticsUI.getView());
+                 mainLayout.add(employerAnalyticsUI.getView(), BorderLayout.CENTER);
              } else {
-                 mainLayout.setCenter(jobList.getView());
+                 mainLayout.add(jobList.getView(), BorderLayout.CENTER);
              }
+             mainLayout.revalidate();
+             mainLayout.repaint();
              setActive(btnDashboard, btnApplications, btnSkills, btnProfile, btnViewApplicants);
         });
 
-        btnApplications.setOnAction(e -> {
+        btnApplications.addActionListener(e -> {
+             mainLayout.removeAll();
+             mainLayout.add(header, BorderLayout.NORTH);
+             mainLayout.add(sidebar, BorderLayout.WEST);
              if (currentUser.getRole().equals("EMPLOYER")) {
-                 mainLayout.setCenter(postJobUI.getView());
+                 mainLayout.add(postJobUI.getView(), BorderLayout.CENTER);
              } else {
-                 mainLayout.setCenter(applications.getView());
+                 mainLayout.add(applications.getView(), BorderLayout.CENTER);
              }
+             mainLayout.revalidate();
+             mainLayout.repaint();
              setActive(btnApplications, btnDashboard, btnSkills, btnProfile, btnViewApplicants);
         });
 
-        btnSkills.setOnAction(e -> {
-             mainLayout.setCenter(skillsUI.getView());
+        btnSkills.addActionListener(e -> {
+             mainLayout.removeAll();
+             mainLayout.add(header, BorderLayout.NORTH);
+             mainLayout.add(sidebar, BorderLayout.WEST);
+             mainLayout.add(skillsUI.getView(), BorderLayout.CENTER);
+             mainLayout.revalidate();
+             mainLayout.repaint();
              setActive(btnSkills, btnDashboard, btnApplications, btnProfile, btnViewApplicants);
         });
 
-        btnProfile.setOnAction(e -> {
-             mainLayout.setCenter(userProfileUI.getView());
+        btnProfile.addActionListener(e -> {
+             mainLayout.removeAll();
+             mainLayout.add(header, BorderLayout.NORTH);
+             mainLayout.add(sidebar, BorderLayout.WEST);
+             mainLayout.add(userProfileUI.getView(), BorderLayout.CENTER);
+             mainLayout.revalidate();
+             mainLayout.repaint();
              setActive(btnProfile, btnDashboard, btnApplications, btnSkills, btnViewApplicants);
         });
 
-        btnViewApplicants.setOnAction(e -> {
-             mainLayout.setCenter(employerApplicationsUI.getView());
+        btnViewApplicants.addActionListener(e -> {
+             mainLayout.removeAll();
+             mainLayout.add(header, BorderLayout.NORTH);
+             mainLayout.add(sidebar, BorderLayout.WEST);
+             mainLayout.add(employerApplicationsUI.getView(), BorderLayout.CENTER);
+             mainLayout.revalidate();
+             mainLayout.repaint();
              setActive(btnViewApplicants, btnDashboard, btnApplications, btnProfile);
         });
 
         if (currentUser.getRole().equals("EMPLOYER")) {
-            sidebar.getChildren().addAll(btnDashboard, btnApplications, btnViewApplicants, btnProfile);
+            sidebar.add(btnDashboard);
+            sidebar.add(Box.createVerticalStrut(5));
+            sidebar.add(btnApplications);
+            sidebar.add(Box.createVerticalStrut(5));
+            sidebar.add(btnViewApplicants);
+            sidebar.add(Box.createVerticalStrut(5));
+            sidebar.add(btnProfile);
         } else {
-            sidebar.getChildren().addAll(btnDashboard, btnApplications, btnSkills, btnProfile);
+            sidebar.add(btnDashboard);
+            sidebar.add(Box.createVerticalStrut(5));
+            sidebar.add(btnApplications);
+            sidebar.add(Box.createVerticalStrut(5));
+            sidebar.add(btnSkills);
+            sidebar.add(Box.createVerticalStrut(5));
+            sidebar.add(btnProfile);
         }
+        sidebar.add(Box.createVerticalGlue());
     }
 
-    private void setActive(Button activeBtn, Button... others) {
-        activeBtn.getStyleClass().add("active");
-        for (Button btn : others) {
-            btn.getStyleClass().remove("active");
+    private JButton createSidebarButton(String text, boolean active) {
+        JButton button = new JButton(text);
+        button.setMaximumSize(new Dimension(Integer.MAX_VALUE, 45));
+        button.setPreferredSize(new Dimension(180, 45));
+        button.setAlignmentX(Component.CENTER_ALIGNMENT);
+        button.setFocusPainted(false);
+        button.setFont(new Font("Segoe UI", Font.PLAIN, 15));
+        button.setBorder(BorderFactory.createEmptyBorder(10, 15, 10, 15));
+        button.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        
+        if (active) {
+            button.setBackground(SystemColors.PRIMARY);
+            button.setForeground(Color.BLACK);
+            button.setFont(new Font("Segoe UI", Font.BOLD, 15));
+        } else {
+            button.setBackground(SystemColors.SURFACE);
+            button.setForeground(new Color(33, 37, 41));
+        }
+        
+        return button;
+    }
+
+    private void setActive(JButton activeBtn, JButton... others) {
+        activeBtn.setBackground(SystemColors.PRIMARY);
+        activeBtn.setForeground(Color.BLACK);
+        activeBtn.setFont(new Font("Segoe UI", Font.BOLD, 15));
+        for (JButton btn : others) {
+            btn.setBackground(SystemColors.SURFACE);
+            btn.setForeground(new Color(33, 37, 41));
+            btn.setFont(new Font("Segoe UI", Font.PLAIN, 15));
         }
     }
 
     public void showJobDetails(com.mesi.jobai.model.Job job, String matchScore) {
         JobDetailsUI details = new JobDetailsUI(this, job, matchScore, currentUser);
-        mainLayout.setCenter(details.getView());
+        mainLayout.removeAll();
+        mainLayout.add(header, BorderLayout.NORTH);
+        mainLayout.add(sidebar, BorderLayout.WEST);
+        mainLayout.add(details.getView(), BorderLayout.CENTER);
+        mainLayout.revalidate();
+        mainLayout.repaint();
     }
 
     public void showJobList() {
-        mainLayout.setCenter(jobList.getView());
+        mainLayout.removeAll();
+        mainLayout.add(header, BorderLayout.NORTH);
+        mainLayout.add(sidebar, BorderLayout.WEST);
+        mainLayout.add(jobList.getView(), BorderLayout.CENTER);
+        mainLayout.revalidate();
+        mainLayout.repaint();
     }
 
     public User getCurrentUser() {
         return currentUser;
     }
 
-    public BorderPane getView() {
+    public JPanel getView() {
         return mainLayout;
     }
 }

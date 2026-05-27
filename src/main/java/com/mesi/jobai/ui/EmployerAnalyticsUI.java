@@ -3,16 +3,12 @@ package com.mesi.jobai.ui;
 import com.mesi.jobai.controller.ApplicationController;
 import com.mesi.jobai.model.Application;
 import com.mesi.jobai.model.User;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.scene.chart.PieChart;
-import javafx.scene.control.Label;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javax.swing.*;
+import java.awt.*;
 import java.util.List;
 
 public class EmployerAnalyticsUI {
-    private VBox view;
+    private JPanel view;
     private User currentUser;
     private ApplicationController applicationController;
 
@@ -20,11 +16,15 @@ public class EmployerAnalyticsUI {
         this.currentUser = currentUser;
         this.applicationController = new ApplicationController();
         
-        view = new VBox(25);
-        view.getStyleClass().add("content-area");
+        view = new JPanel();
+        view.setLayout(new BoxLayout(view, BoxLayout.Y_AXIS));
+        view.setBackground(SystemColors.BACKGROUND);
+        view.setBorder(BorderFactory.createEmptyBorder(25, 25, 25, 25));
 
-        Label sectionTitle = new Label("Employer Analytics Dashboard");
-        sectionTitle.setStyle("-fx-font-size: 28px; -fx-font-weight: 800; -fx-text-fill: -text-light;");
+        JLabel sectionTitle = new JLabel("Employer Analytics Dashboard");
+        sectionTitle.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 28));
+        sectionTitle.setForeground(SystemColors.TEXT_PRIMARY);
+        sectionTitle.setAlignmentX(Component.LEFT_ALIGNMENT);
         
         List<Application> allApps = applicationController.getApplicationsForEmployer(currentUser.getId());
         
@@ -48,62 +48,132 @@ public class EmployerAnalyticsUI {
             }
         }
 
-        HBox statsBox = new HBox(20);
-        statsBox.getChildren().addAll(
-            createStatCard("Total Applications", total, "-accent-color"),
-            createStatCard("Pending/Reviewing", pending + reviewing, "#f39c12"),
-            createStatCard("Interviews", interviewing, "#3498db"),
-            createStatCard("Hired", hired, "-success-color")
-        );
-
-        VBox chartCard = new VBox(15);
-        chartCard.getStyleClass().add("card");
-        chartCard.setPadding(new Insets(20));
-        chartCard.setMaxWidth(850);
-        chartCard.setAlignment(Pos.CENTER);
-
-        Label chartTitle = new Label("Application Status Distribution");
-        chartTitle.setStyle("-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: -text-muted;");
-
-        PieChart pieChart = new PieChart();
-        pieChart.getData().addAll(
-            new PieChart.Data("Pending", pending),
-            new PieChart.Data("Reviewing", reviewing),
-            new PieChart.Data("Interviewing", interviewing),
-            new PieChart.Data("Hired", hired),
-            new PieChart.Data("Rejected", rejected)
-        );
-        pieChart.setPrefSize(500, 350);
-        pieChart.setLegendVisible(true);
-        // Force pie chart labels to be visible on dark background via CSS directly or inline
-        pieChart.setStyle("-fx-text-fill: -text-light; -fx-pie-label-visible: true;");
-
-        chartCard.getChildren().addAll(chartTitle, pieChart);
+        JPanel statsPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 20, 0));
+        statsPanel.setBackground(SystemColors.BACKGROUND);
+        statsPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
         
-        view.getChildren().addAll(sectionTitle, statsBox, chartCard);
+        statsPanel.add(createStatCard("Total Applications", total, SystemColors.PRIMARY));
+        statsPanel.add(createStatCard("Pending/Reviewing", pending + reviewing, new Color(243, 156, 18)));
+        statsPanel.add(createStatCard("Interviews", interviewing, new Color(52, 152, 219)));
+        statsPanel.add(createStatCard("Hired", hired, new Color(34, 139, 34)));
+
+        JPanel chartCard = new JPanel();
+        chartCard.setLayout(new BoxLayout(chartCard, BoxLayout.Y_AXIS));
+        chartCard.setBackground(SystemColors.SURFACE);
+        chartCard.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(SystemColors.BORDER, 1),
+            BorderFactory.createEmptyBorder(20, 20, 20, 20)
+        ));
+        chartCard.setMaximumSize(new Dimension(850, Integer.MAX_VALUE));
+        chartCard.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        JLabel chartTitle = new JLabel("Application Status Distribution");
+        chartTitle.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 18));
+        chartTitle.setForeground(SystemColors.TEXT_SECONDARY);
+        chartTitle.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        // Create a simple text-based chart since Swing doesn't have built-in pie charts
+        JPanel chartPanel = new JPanel();
+        chartPanel.setLayout(new BoxLayout(chartPanel, BoxLayout.Y_AXIS));
+        chartPanel.setBackground(SystemColors.SURFACE);
+        chartPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        if (total > 0) {
+            chartPanel.add(createChartBar("Pending", pending, total, new Color(255, 193, 7)));
+            chartPanel.add(Box.createVerticalStrut(10));
+            chartPanel.add(createChartBar("Reviewing", reviewing, total, new Color(243, 156, 18)));
+            chartPanel.add(Box.createVerticalStrut(10));
+            chartPanel.add(createChartBar("Interviewing", interviewing, total, new Color(52, 152, 219)));
+            chartPanel.add(Box.createVerticalStrut(10));
+            chartPanel.add(createChartBar("Hired", hired, total, new Color(34, 139, 34)));
+            chartPanel.add(Box.createVerticalStrut(10));
+            chartPanel.add(createChartBar("Rejected", rejected, total, new Color(220, 53, 69)));
+        } else {
+            JLabel noDataLabel = new JLabel("No application data available");
+            noDataLabel.setForeground(SystemColors.TEXT_SECONDARY);
+            noDataLabel.setFont(new Font(Font.SANS_SERIF, Font.ITALIC, 14));
+            noDataLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+            chartPanel.add(noDataLabel);
+        }
+
+        chartCard.add(chartTitle);
+        chartCard.add(Box.createVerticalStrut(15));
+        chartCard.add(chartPanel);
+        
+        view.add(sectionTitle);
+        view.add(Box.createVerticalStrut(25));
+        view.add(statsPanel);
+        view.add(Box.createVerticalStrut(25));
+        view.add(chartCard);
+        view.add(Box.createVerticalGlue());
     }
 
-    private VBox createStatCard(String title, int count, String colorHex) {
-        VBox card = new VBox(10);
-        card.getStyleClass().add("card");
-        card.setPadding(new Insets(20, 30, 20, 30));
-        card.setAlignment(Pos.CENTER);
-        card.setMinWidth(150);
+    private JPanel createStatCard(String title, int count, Color color) {
+        JPanel card = new JPanel();
+        card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
+        card.setBackground(SystemColors.SURFACE);
+        card.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(SystemColors.BORDER, 1),
+            BorderFactory.createEmptyBorder(20, 30, 20, 30)
+        ));
+        card.setPreferredSize(new Dimension(150, 100));
 
-        Label lblTitle = new Label(title);
-        lblTitle.setStyle("-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: -text-muted;");
+        JLabel lblTitle = new JLabel(title);
+        lblTitle.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 14));
+        lblTitle.setForeground(SystemColors.TEXT_SECONDARY);
+        lblTitle.setAlignmentX(Component.CENTER_ALIGNMENT);
         
-        Label lblCount = new Label(String.valueOf(count));
-        
-        // Handle CSS variables or exact hexes
-        String fillVal = colorHex.startsWith("-") ? colorHex : colorHex;
-        lblCount.setStyle("-fx-font-size: 36px; -fx-font-weight: 800; -fx-text-fill: " + fillVal + ";");
+        JLabel lblCount = new JLabel(String.valueOf(count));
+        lblCount.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 36));
+        lblCount.setForeground(color);
+        lblCount.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        card.getChildren().addAll(lblTitle, lblCount);
+        card.add(lblTitle);
+        card.add(Box.createVerticalStrut(10));
+        card.add(lblCount);
+        
         return card;
     }
 
-    public VBox getView() {
+    private JPanel createChartBar(String label, int value, int total, Color color) {
+        JPanel barPanel = new JPanel(new BorderLayout());
+        barPanel.setBackground(SystemColors.SURFACE);
+        barPanel.setMaximumSize(new Dimension(500, 30));
+
+        JLabel labelText = new JLabel(label + " (" + value + ")");
+        labelText.setForeground(SystemColors.TEXT_PRIMARY);
+        labelText.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 12));
+        labelText.setPreferredSize(new Dimension(120, 25));
+
+        JPanel barContainer = new JPanel(new BorderLayout());
+        barContainer.setBackground(SystemColors.BACKGROUND);
+        barContainer.setBorder(BorderFactory.createLineBorder(SystemColors.BORDER, 1));
+        barContainer.setPreferredSize(new Dimension(300, 25));
+
+        if (total > 0) {
+            int percentage = (int) ((double) value / total * 100);
+            int barWidth = (int) ((double) value / total * 298); // 298 to account for border
+
+            JPanel bar = new JPanel();
+            bar.setBackground(color);
+            bar.setPreferredSize(new Dimension(barWidth, 23));
+
+            JLabel percentageLabel = new JLabel(percentage + "%");
+            percentageLabel.setForeground(SystemColors.TEXT_PRIMARY);
+            percentageLabel.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 11));
+            percentageLabel.setHorizontalAlignment(SwingConstants.CENTER);
+
+            barContainer.add(bar, BorderLayout.WEST);
+            barContainer.add(percentageLabel, BorderLayout.CENTER);
+        }
+
+        barPanel.add(labelText, BorderLayout.WEST);
+        barPanel.add(barContainer, BorderLayout.CENTER);
+
+        return barPanel;
+    }
+
+    public JPanel getView() {
         return view;
     }
 }

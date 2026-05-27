@@ -1,0 +1,33 @@
+===========================================
+APPLICATION STATUS CHANGE REPORT
+===========================================
+
+Report Generated: 2026-05-26 17:25:29
+
+APPLICATION DETAILS:
+Application ID: 8
+Status Change: HIRED ? REVIEWING
+Applied Date: 2026-05-26 14:28:22.287205
+
+JOB DETAILS:
+Job ID: 2
+Job Title: senior java Developer
+Company: place tech
+Description: java development full time
+
+APPLICANT DETAILS:
+Applicant ID: 8
+Name: yordanos Alemu
+Email: yordi@gmail.com
+
+EMPLOYER DETAILS:
+Employer ID: 14
+Name: hanan
+Email: hanan12@gmail.com
+
+ACTION SUMMARY:
+? Status updated to: REVIEWING
+
+===========================================
+End of Report
+===========================================

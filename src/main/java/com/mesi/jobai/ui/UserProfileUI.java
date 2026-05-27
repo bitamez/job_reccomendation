@@ -2,62 +2,95 @@ package com.mesi.jobai.ui;
 
 import com.mesi.jobai.controller.AuthController;
 import com.mesi.jobai.model.User;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
-import javafx.scene.layout.VBox;
+import javax.swing.*;
+import java.awt.*;
 
 public class UserProfileUI {
-    private VBox view;
+    private JPanel view;
     private User currentUser;
     private AuthController authController;
 
     public UserProfileUI(User currentUser) {
         this.currentUser = currentUser;
         this.authController = new AuthController();
-        view = new VBox(25);
-        view.getStyleClass().add("content-area");
-        view.setAlignment(Pos.TOP_LEFT);
+        view = new JPanel();
+        view.setLayout(new BoxLayout(view, BoxLayout.Y_AXIS));
+        view.setBackground(SystemColors.BACKGROUND);
+        view.setBorder(BorderFactory.createEmptyBorder(25, 25, 25, 25));
 
-        Label sectionTitle = new Label("My Profile");
-        sectionTitle.setStyle("-fx-font-size: 28px; -fx-font-weight: 800; -fx-text-fill: -text-light;");
+        JLabel sectionTitle = new JLabel("My Profile");
+        sectionTitle.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 28));
+        sectionTitle.setForeground(SystemColors.TEXT_PRIMARY);
+        sectionTitle.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        VBox formCard = new VBox(15);
-        formCard.getStyleClass().add("card");
-        formCard.setPadding(new Insets(30));
-        formCard.setMaxWidth(500);
+        JPanel formCard = new JPanel();
+        formCard.setLayout(new BoxLayout(formCard, BoxLayout.Y_AXIS));
+        formCard.setBackground(SystemColors.SURFACE);
+        formCard.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(SystemColors.BORDER, 1),
+            BorderFactory.createEmptyBorder(30, 30, 30, 30)
+        ));
+        formCard.setMaximumSize(new Dimension(500, Integer.MAX_VALUE));
+        formCard.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        Label roleLabel = new Label("Account Type: " + currentUser.getRole());
-        roleLabel.setStyle("-fx-font-size: 15px; -fx-text-fill: -accent-color; -fx-font-weight: bold; -fx-padding: 0 0 10 0;");
+        JLabel roleLabel = new JLabel("Account Type: " + currentUser.getRole());
+        roleLabel.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 15));
+        roleLabel.setForeground(SystemColors.PRIMARY);
+        roleLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        TextField nameField = new TextField(currentUser.getName());
-        nameField.setPromptText("Full Name");
-        nameField.setMaxWidth(Double.MAX_VALUE);
-        nameField.setPrefHeight(45);
+        JLabel lblName = new JLabel("Full Name");
+        lblName.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 12));
+        lblName.setForeground(SystemColors.TEXT_SECONDARY);
+        lblName.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        TextField emailField = new TextField(currentUser.getEmail());
-        emailField.setPromptText("Email Address");
-        emailField.setMaxWidth(Double.MAX_VALUE);
-        emailField.setPrefHeight(45);
-        // We often disable email editing to keep it simple, but let's allow it for now if they want to update
+        JTextField nameField = new JTextField(currentUser.getName());
+        nameField.setMaximumSize(new Dimension(Integer.MAX_VALUE, 45));
+        nameField.setPreferredSize(new Dimension(450, 45));
+        nameField.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(SystemColors.BORDER, 1),
+            BorderFactory.createEmptyBorder(10, 15, 10, 15)
+        ));
+        nameField.setBackground(SystemColors.BACKGROUND);
+        nameField.setForeground(SystemColors.TEXT_PRIMARY);
+        nameField.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        Label statusLabel = new Label();
-        statusLabel.setStyle("-fx-font-weight: bold;");
+        JLabel lblEmail = new JLabel("Email Address");
+        lblEmail.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 12));
+        lblEmail.setForeground(SystemColors.TEXT_SECONDARY);
+        lblEmail.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        Button updateBtn = new Button("Save Changes");
-        updateBtn.getStyleClass().add("btn-accent");
-        updateBtn.setMaxWidth(Double.MAX_VALUE);
-        updateBtn.setPrefHeight(45);
+        JTextField emailField = new JTextField(currentUser.getEmail());
+        emailField.setMaximumSize(new Dimension(Integer.MAX_VALUE, 45));
+        emailField.setPreferredSize(new Dimension(450, 45));
+        emailField.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(SystemColors.BORDER, 1),
+            BorderFactory.createEmptyBorder(10, 15, 10, 15)
+        ));
+        emailField.setBackground(SystemColors.BACKGROUND);
+        emailField.setForeground(SystemColors.TEXT_PRIMARY);
+        emailField.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        JLabel statusLabel = new JLabel();
+        statusLabel.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 12));
+        statusLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        JButton updateBtn = new JButton("Save Changes");
+        updateBtn.setMaximumSize(new Dimension(Integer.MAX_VALUE, 45));
+        updateBtn.setPreferredSize(new Dimension(450, 45));
+        updateBtn.setBackground(SystemColors.PRIMARY);
+        updateBtn.setForeground(Color.BLACK);
+        updateBtn.setBorder(BorderFactory.createEmptyBorder(12, 20, 12, 20));
+        updateBtn.setFocusPainted(false);
+        updateBtn.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        updateBtn.setAlignmentX(Component.LEFT_ALIGNMENT);
         
-        updateBtn.setOnAction(e -> {
+        updateBtn.addActionListener(e -> {
             String newName = nameField.getText();
             String newEmail = emailField.getText();
             
             if (newName.isEmpty() || newEmail.isEmpty()) {
                 statusLabel.setText("Fields cannot be empty.");
-                statusLabel.setStyle("-fx-text-fill: -error-color;");
+                statusLabel.setForeground(Color.RED);
                 return;
             }
             
@@ -66,24 +99,34 @@ public class UserProfileUI {
             
             if (authController.updateProfile(currentUser)) {
                 statusLabel.setText("Profile updated successfully!");
-                statusLabel.setStyle("-fx-text-fill: -success-color;");
+                statusLabel.setForeground(new Color(34, 139, 34));
             } else {
                 statusLabel.setText("Failed to update profile. Email might be in use.");
-                statusLabel.setStyle("-fx-text-fill: -error-color;");
+                statusLabel.setForeground(Color.RED);
             }
         });
 
-        Label lblName = new Label("Full Name");
-        lblName.setStyle("-fx-text-fill: -text-muted; -fx-font-weight: bold;");
-        Label lblEmail = new Label("Email Address");
-        lblEmail.setStyle("-fx-text-fill: -text-muted; -fx-font-weight: bold;");
+        formCard.add(roleLabel);
+        formCard.add(Box.createVerticalStrut(15));
+        formCard.add(lblName);
+        formCard.add(Box.createVerticalStrut(5));
+        formCard.add(nameField);
+        formCard.add(Box.createVerticalStrut(15));
+        formCard.add(lblEmail);
+        formCard.add(Box.createVerticalStrut(5));
+        formCard.add(emailField);
+        formCard.add(Box.createVerticalStrut(15));
+        formCard.add(statusLabel);
+        formCard.add(Box.createVerticalStrut(15));
+        formCard.add(updateBtn);
 
-        formCard.getChildren().addAll(roleLabel, lblName, nameField, lblEmail, emailField, statusLabel, updateBtn);
-
-        view.getChildren().addAll(sectionTitle, formCard);
+        view.add(sectionTitle);
+        view.add(Box.createVerticalStrut(25));
+        view.add(formCard);
+        view.add(Box.createVerticalGlue());
     }
 
-    public VBox getView() {
+    public JPanel getView() {
         return view;
     }
 }

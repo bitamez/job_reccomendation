@@ -1,14 +1,9 @@
 package com.mesi.jobai.ui;
 
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.Region;
-import javafx.scene.layout.VBox;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import com.mesi.jobai.controller.JobController;
 import com.mesi.jobai.controller.RecommendationController;
 import com.mesi.jobai.model.Job;
@@ -17,36 +12,48 @@ import com.mesi.jobai.service.AIService;
 import java.util.List;
 
 public class JobListUI {
-    private VBox view;
+    private JPanel view;
     private DashboardUI dashboard;
-    private VBox jobListContainer;
+    private JPanel jobListContainer;
     private List<Job> allJobs;
     private List<Skill> userSkills;
 
     public JobListUI(DashboardUI dashboard) {
         this.dashboard = dashboard;
-        view = new VBox(20);
-        view.getStyleClass().add("content-area");
+        view = new JPanel();
+        view.setLayout(new BoxLayout(view, BoxLayout.Y_AXIS));
+        view.setBackground(SystemColors.BACKGROUND);
+        view.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
-        Label sectionTitle = new Label("Welcome, " + dashboard.getCurrentUser().getName().split(" ")[0] + "!");
-        sectionTitle.setStyle("-fx-font-size: 28px; -fx-font-weight: 800; -fx-text-fill: -text-light;");
+        JLabel sectionTitle = new JLabel("Welcome, " + dashboard.getCurrentUser().getName().split(" ")[0] + "!");
+        sectionTitle.setFont(new Font("Segoe UI", Font.BOLD, 32));
+        sectionTitle.setForeground(new Color(33, 37, 41));
+        sectionTitle.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        HBox topArea = new HBox(20);
-        topArea.setAlignment(Pos.CENTER_LEFT);
+        JPanel topArea = new JPanel(new BorderLayout());
+        topArea.setBackground(SystemColors.BACKGROUND);
+        topArea.setMaximumSize(new Dimension(Integer.MAX_VALUE, 50));
 
-        Label recommendedTitle = new Label("Recommended Jobs");
-        recommendedTitle.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: -text-muted;");
+        JLabel recommendedTitle = new JLabel("Recommended Jobs");
+        recommendedTitle.setFont(new Font("Segoe UI", Font.BOLD, 20));
+        recommendedTitle.setForeground(new Color(73, 80, 87));
 
-        Region spacer = new Region();
-        HBox.setHgrow(spacer, Priority.ALWAYS);
+        JTextField searchField = new JTextField();
+        searchField.setPreferredSize(new Dimension(300, 40));
+        searchField.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(SystemColors.BORDER, 1),
+            BorderFactory.createEmptyBorder(10, 15, 10, 15)
+        ));
+        searchField.setBackground(SystemColors.SURFACE);
+        searchField.setForeground(SystemColors.TEXT_PRIMARY);
 
-        TextField searchField = new TextField();
-        searchField.setPromptText("Search jobs by title or company...");
-        searchField.setPrefWidth(300);
-        searchField.setPrefHeight(40);
+        topArea.add(recommendedTitle, BorderLayout.WEST);
+        topArea.add(searchField, BorderLayout.EAST);
 
-        topArea.getChildren().addAll(recommendedTitle, spacer, searchField);
-        view.getChildren().addAll(sectionTitle, topArea);
+        view.add(sectionTitle);
+        view.add(Box.createVerticalStrut(20));
+        view.add(topArea);
+        view.add(Box.createVerticalStrut(20));
 
         JobController jobController = new JobController();
         allJobs = jobController.getAllJobs();
@@ -54,14 +61,25 @@ public class JobListUI {
         RecommendationController recommendationController = new RecommendationController();
         userSkills = recommendationController.getUserSkills(dashboard.getCurrentUser().getId());
 
-        jobListContainer = new VBox(15);
-        jobListContainer.setMaxWidth(850);
-        view.getChildren().add(jobListContainer);
+        jobListContainer = new JPanel();
+        jobListContainer.setLayout(new BoxLayout(jobListContainer, BoxLayout.Y_AXIS));
+        jobListContainer.setBackground(SystemColors.BACKGROUND);
+        jobListContainer.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        JScrollPane scrollPane = new JScrollPane(jobListContainer);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollPane.setBorder(null);
+        scrollPane.setBackground(SystemColors.BACKGROUND);
+        scrollPane.getViewport().setBackground(SystemColors.BACKGROUND);
+
+        view.add(scrollPane);
 
         if (allJobs.isEmpty()) {
-            Label emptyLbl = new Label("No jobs available right now. Check back later!");
-            emptyLbl.setStyle("-fx-text-fill: -text-muted; -fx-font-style: italic;");
-            jobListContainer.getChildren().add(emptyLbl);
+            JLabel emptyLbl = new JLabel("No jobs available right now. Check back later!");
+            emptyLbl.setForeground(new Color(73, 80, 87));
+            emptyLbl.setFont(new Font("Segoe UI", Font.ITALIC, 16));
+            jobListContainer.add(emptyLbl);
         } else {
             // Sort jobs by highest AI match score (descending) initially
             allJobs.sort((j1, j2) -> {
@@ -74,14 +92,17 @@ public class JobListUI {
             populateJobs("");
 
             // Setup real-time search filtering
-            searchField.textProperty().addListener((observable, oldValue, newValue) -> {
-                populateJobs(newValue);
+            searchField.addKeyListener(new KeyAdapter() {
+                @Override
+                public void keyReleased(KeyEvent e) {
+                    populateJobs(searchField.getText());
+                }
             });
         }
     }
 
     private void populateJobs(String filterText) {
-        jobListContainer.getChildren().clear();
+        jobListContainer.removeAll();
         String lowerFilter = filterText.toLowerCase();
 
         boolean foundAny = false;
@@ -90,50 +111,76 @@ public class JobListUI {
                 job.getCompany().toLowerCase().contains(lowerFilter)) {
                 
                 int score = AIService.calculateMatchScore(job, userSkills); 
-                jobListContainer.getChildren().add(createJobCard(job, score + "% Match"));
+                jobListContainer.add(createJobCard(job, score + "% Match"));
+                jobListContainer.add(Box.createVerticalStrut(15));
                 foundAny = true;
             }
         }
 
         if (!foundAny) {
-            Label emptyLbl = new Label("No jobs match your search: '" + filterText + "'");
-            emptyLbl.setStyle("-fx-text-fill: -text-muted; -fx-font-style: italic;");
-            jobListContainer.getChildren().add(emptyLbl);
+            JLabel emptyLbl = new JLabel("No jobs match your search: '" + filterText + "'");
+            emptyLbl.setForeground(new Color(73, 80, 87));
+            emptyLbl.setFont(new Font("Segoe UI", Font.ITALIC, 16));
+            jobListContainer.add(emptyLbl);
         }
+
+        jobListContainer.revalidate();
+        jobListContainer.repaint();
     }
 
-    private HBox createJobCard(Job job, String matchPercentage) {
-        HBox card = new HBox(20);
-        card.getStyleClass().add("card");
-        card.setAlignment(Pos.CENTER_LEFT);
-        card.setPadding(new Insets(25));
+    private JPanel createJobCard(Job job, String matchPercentage) {
+        JPanel card = new JPanel(new BorderLayout());
+        card.setBackground(SystemColors.SURFACE);
+        card.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(SystemColors.BORDER, 1),
+            BorderFactory.createEmptyBorder(25, 25, 25, 25)
+        ));
+        card.setMaximumSize(new Dimension(Integer.MAX_VALUE, 100));
 
-        VBox textLayout = new VBox(8);
-        Label lblTitle = new Label(job.getTitle());
-        lblTitle.getStyleClass().add("card-title");
-        lblTitle.setStyle("-fx-font-size: 20px;");
-        Label lblSub = new Label(job.getCompany());
-        lblSub.getStyleClass().add("card-subtitle");
-        lblSub.setStyle("-fx-font-size: 15px; -fx-text-fill: -accent-color; -fx-font-weight: bold;");
-        textLayout.getChildren().addAll(lblTitle, lblSub);
+        JPanel textLayout = new JPanel();
+        textLayout.setLayout(new BoxLayout(textLayout, BoxLayout.Y_AXIS));
+        textLayout.setBackground(SystemColors.SURFACE);
 
-        Region spacer = new Region();
-        HBox.setHgrow(spacer, Priority.ALWAYS);
+        JLabel lblTitle = new JLabel(job.getTitle());
+        lblTitle.setFont(new Font("Segoe UI", Font.BOLD, 22));
+        lblTitle.setForeground(new Color(33, 37, 41));
+        lblTitle.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        Label lblScore = new Label(matchPercentage);
-        lblScore.getStyleClass().add("match-score");
-        lblScore.setStyle("-fx-padding: 0 20 0 0;");
+        JLabel lblSub = new JLabel(job.getCompany());
+        lblSub.setFont(new Font("Segoe UI", Font.BOLD, 17));
+        lblSub.setForeground(SystemColors.PRIMARY);
+        lblSub.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        Button btnViewDetails = new Button("View Details ▸");
-        btnViewDetails.getStyleClass().add("btn-primary");
-        btnViewDetails.setPrefHeight(40);
-        btnViewDetails.setOnAction(e -> dashboard.showJobDetails(job, matchPercentage));
+        textLayout.add(lblTitle);
+        textLayout.add(Box.createVerticalStrut(8));
+        textLayout.add(lblSub);
 
-        card.getChildren().addAll(textLayout, spacer, lblScore, btnViewDetails);
+        JPanel rightPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
+        rightPanel.setBackground(SystemColors.SURFACE);
+
+        JLabel lblScore = new JLabel(matchPercentage);
+        lblScore.setFont(new Font("Segoe UI", Font.BOLD, 16));
+        lblScore.setForeground(new Color(73, 80, 87));
+
+        JButton btnViewDetails = new JButton("View Details ▸");
+        btnViewDetails.setPreferredSize(new Dimension(120, 40));
+        btnViewDetails.setBackground(SystemColors.PRIMARY);
+        btnViewDetails.setForeground(Color.BLACK);
+        btnViewDetails.setBorder(BorderFactory.createEmptyBorder(8, 15, 8, 15));
+        btnViewDetails.setFocusPainted(false);
+        btnViewDetails.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        btnViewDetails.addActionListener(e -> dashboard.showJobDetails(job, matchPercentage));
+
+        rightPanel.add(lblScore);
+        rightPanel.add(btnViewDetails);
+
+        card.add(textLayout, BorderLayout.WEST);
+        card.add(rightPanel, BorderLayout.EAST);
+        
         return card;
     }
 
-    public VBox getView() {
+    public JPanel getView() {
         return view;
     }
 }

@@ -254,7 +254,7 @@ public class UnifiedLoginUI extends JFrame {
         RegisterUI registerUI = new RegisterUI(registerFrame);
         registerFrame.setContentPane(registerUI.getView());
         registerFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        registerFrame.setSize(500, 620);
+        registerFrame.setSize(500, 650);
         registerFrame.setLocationRelativeTo(null);
         registerFrame.setVisible(true);
     }

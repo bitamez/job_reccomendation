@@ -44,7 +44,7 @@ public class RegisterUI {
             BorderFactory.createLineBorder(new Color(220, 220, 220), 1),
             new EmptyBorder(30, 40, 30, 40)
         ));
-        formBox.setPreferredSize(new Dimension(420, 540));
+        formBox.setPreferredSize(new Dimension(420, 580));
 
         // Title
         JLabel title = new JLabel("Join AI Job Network");
